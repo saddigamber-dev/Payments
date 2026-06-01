@@ -1,218 +1,253 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Payment Methods</title>
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Inter, Arial, sans-serif;
-    }body {
-  background: #0f1115;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-}
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Inter,Arial,sans-serif;
+    }
 
-.container {
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+    body{
+      background:#0f1115;
+      color:white;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+    }
 
-.card {
-  background: #171a21;
-  border: 1px solid #2a2f3a;
-  border-radius: 18px;
-  padding: 18px;
-  transition: 0.2s ease;
-}
+    .card{
+      width:100%;
+      max-width:380px;
+      background:#171a21;
+      border:1px solid #2a2f3a;
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 10px 40px rgba(0,0,0,.35);
+    }
 
-.card:hover {
-  transform: translateY(-2px);
-  border-color: #3a4250;
-}
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:14px;
+    }
 
-.top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
+    .title{
+      font-size:20px;
+      font-weight:700;
+    }
 
-.title {
-  font-size: 18px;
-  font-weight: 700;
-}
+    .status{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#1d3323;
+      color:#7dff9d;
+      font-weight:600;
+    }
 
-.status {
-  font-size: 12px;
-  color: #7CFF9B;
-  background: rgba(124,255,155,0.1);
-  padding: 5px 10px;
-  border-radius: 999px;
-}
+    .desc{
+      color:#b7c0ce;
+      font-size:14px;
+      line-height:1.5;
+      margin-bottom:18px;
+    }
 
-.desc {
-  font-size: 14px;
-  color: #b8c0cc;
-  margin-bottom: 15px;
-  line-height: 1.5;
-}
+    .btn{
+      width:100%;
+      border:none;
+      outline:none;
+      text-decoration:none;
+      display:block;
+      text-align:center;
+      padding:14px;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s;
+      margin-bottom:12px;
+    }
 
-.btn {
-  width: 100%;
-  border: none;
-  border-radius: 12px;
-  padding: 13px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  transition: 0.2s ease;
-}
+    .btn:hover{
+      transform:translateY(-1px);
+      opacity:.95;
+    }
 
-.upi {
-  background: #4f46e5;
-  color: white;
-}
+    .upi{
+      background:#5b5fff;
+      color:white;
+    }
 
-.crypto {
-  background: #f7931a;
-  color: black;
-}
+    .crypto{
+      background:#f3ba2f;
+      color:black;
+    }
 
-.binance {
-  background: #f3ba2f;
-  color: black;
-}
+    .binance{
+      background:#f0b90b;
+      color:black;
+    }
 
-.btn:hover {
-  opacity: 0.9;
-  transform: scale(0.99);
-}
+    .wallet{
+      margin-top:10px;
+      color:#8e98a8;
+      font-size:12px;
+      word-break:break-all;
+      line-height:1.5;
+    }
 
-.wallet {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #8e98a8;
-  word-break: break-all;
-  line-height: 1.5;
-}
-
-.footer {
-  text-align: center;
-  margin-top: 10px;
-  color: #6b7280;
-  font-size: 12px;
-}
-
+    .footer{
+      margin-top:16px;
+      text-align:center;
+      color:#687282;
+      font-size:12px;
+    }
   </style>
 </head>
 <body>
-  <div class="container" id="app"></div>  <script>
-    const path = window.location.pathname.toLowerCase();
 
-    function card(title, status, desc, buttonClass, buttonText, href, extra = '') {
-      return `
-        <div class="card">
-          <div class="top">
-            <div class="title">${title}</div>
-            <div class="status">${status}</div>
-          </div>
+<div id="app"></div>
 
-          <div class="desc">${desc}</div>
+<script>
+const path = location.pathname.toLowerCase();
 
-          <a class="btn ${buttonClass}" href="${href}">
-            ${buttonText}
-          </a>
+function renderHome(){
+  return `
+    <div class="card">
+      <div class="top">
+        <div class="title">💳 Payment Methods</div>
+        <div class="status">ACTIVE</div>
+      </div>
 
-          ${extra}
-        </div>
-      `;
-    }
+      <div class="desc">
+        Select your preferred payment method.
+      </div>
 
-    let content = '';
+      <a class="btn upi" href="/upi">
+        🇮🇳 UPI Payment
+      </a>
 
-    if (path === '/upi') {
-      content = card(
-        '🇮🇳 UPI',
-        'INSTANT',
-        'Google Pay • PhonePe • Paytm',
-        'upi',
-        'Pay via UPI',
-        'upi://pay?pa=digamberraj7903@ptaxis&pn=Digamber%20Raj&cu=INR'
-      );
-    }
+      <a class="btn crypto" href="/crypto">
+        ₿ Crypto Payment
+      </a>
 
-    else if (path === '/crypto') {
-      content = card(
-        '₿ CRYPTO',
-        '1-5 MIN',
-        'USDT • BTCB • LTC (BEP20)',
-        'crypto',
-        'Open Wallet',
-        'https://link.trustwallet.com/send?coin=20000714&address=0x33aca3a213443730cf548b77b520f4f87df447ec',
-        '<div class="wallet">0x33aca3a213443730cf548b77b520f4f87df447ec</div>'
-      );
-    }
+      <a class="btn binance" href="/binance">
+        🟡 Binance UID
+      </a>
 
-    else if (path === '/binance') {
-      content = `
-        <div class="card">
-          <div class="top">
-            <div class="title">🟡 BINANCE UID</div>
-            <div class="status">FASTEST</div>
-          </div>
+      <div class="footer">
+        Valid payments are processed instantly.
+      </div>
+    </div>
+  `;
+}
 
-          <div class="desc">
-            Internal Binance transfer supported
-          </div>
+function renderUPI(){
+  return `
+    <div class="card">
+      <div class="top">
+        <div class="title">🇮🇳 UPI Payment</div>
+        <div class="status">INSTANT</div>
+      </div>
 
-          <button class="btn binance" onclick="copyUID()">
-            Copy Binance UID
-          </button>
+      <div class="desc">
+        Google Pay • PhonePe • Paytm
+      </div>
 
-          <div class="wallet">814429508</div>
-        </div>
-      `;
-    }
+      <a class="btn upi"
+      href="upi://pay?pa=digamberraj7903@ptaxis&pn=Digamber%20Raj&cu=INR">
+        Open UPI App
+      </a>
 
-    else {
-      content = `
-        <div class="card">
-          <div class="top">
-            <div class="title">💳 PAYMENT METHODS</div>
-            <div class="status">ACTIVE</div>
-          </div>
+      <div class="footer">
+        Send valid screenshot after payment.
+      </div>
+    </div>
+  `;
+}
 
-          <div class="desc">
-            Select a payment method below
-          </div>
+function renderCrypto(){
+  return `
+    <div class="card">
+      <div class="top">
+        <div class="title">₿ Crypto Payment</div>
+        <div class="status">1-5 MIN</div>
+      </div>
 
-          <a class="btn upi" href="/upi">UPI</a>
-          <br><br>
-          <a class="btn crypto" href="/crypto">CRYPTO</a>
-          <br><br>
-          <a class="btn binance" href="/binance">BINANCE UID</a>
-        </div>
-      `;
-    }
+      <div class="desc">
+        USDT • BTCB • LTC (BEP20)
+      </div>
 
-    document.getElementById('app').innerHTML = content;
+      <a class="btn crypto"
+      href="https://link.trustwallet.com/send?coin=20000714&address=0x33aca3a213443730cf548b77b520f4f87df447ec">
+        Open Wallet
+      </a>
 
-    function copyUID() {
-      navigator.clipboard.writeText('814429508');
-      alert('Binance UID copied');
-    }
-  </script></body>
+      <div class="wallet">
+        0x33aca3a213443730cf548b77b520f4f87df447ec
+      </div>
+
+      <div class="footer">
+        Blockchain confirmations required.
+      </div>
+    </div>
+  `;
+}
+
+function renderBinance(){
+  return `
+    <div class="card">
+      <div class="top">
+        <div class="title">🟡 Binance UID</div>
+        <div class="status">FASTEST</div>
+      </div>
+
+      <div class="desc">
+        Internal Binance transfers supported.
+      </div>
+
+      <button class="btn binance" onclick="copyUID()">
+        Copy Binance UID
+      </button>
+
+      <div class="wallet">
+        UID: 814429508
+      </div>
+
+      <div class="footer">
+        Lowest transfer delay available.
+      </div>
+    </div>
+  `;
+}
+
+function copyUID(){
+  navigator.clipboard.writeText("814429508");
+  alert("Binance UID copied");
+}
+
+if(path === "/upi"){
+  app.innerHTML = renderUPI();
+}
+else if(path === "/crypto"){
+  app.innerHTML = renderCrypto();
+}
+else if(path === "/binance"){
+  app.innerHTML = renderBinance();
+}
+else{
+  app.innerHTML = renderHome();
+}
+</script>
+
+</body>
 </html>
