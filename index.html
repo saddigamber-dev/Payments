@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Payments</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -28,7 +31,7 @@ width:100%;
 max-width:390px;
 background:#171a21;
 border:1px solid #2a2f3a;
-border-radius:20px;
+border-radius:22px;
 padding:22px;
 box-shadow:0 10px 40px rgba(0,0,0,.35);
 }
@@ -107,9 +110,24 @@ line-height:1.5;
 .wallet{
 font-size:12px;
 color:#8e98a8;
-margin-top:10px;
+margin-top:15px;
 word-break:break-all;
+text-align:center;
+line-height:1.5;
 }
+
+#qrcode{
+display:flex;
+justify-content:center;
+margin-top:18px;
+}
+
+#qrcode img{
+background:white;
+padding:10px;
+border-radius:14px;
+}
+
 </style>
 </head>
 
@@ -121,8 +139,18 @@ word-break:break-all;
 
 const path = location.pathname.toLowerCase();
 
+const UPI_ID = "digamberraj7903@ptaxis";
+const UPI_NAME = "Digamber Raj";
+
+const BINANCE_UID = "814429508";
+
+const WALLET =
+"0x33aca3a213443730cf548b77b520f4f87df447ec";
+
 function home(){
+
 return `
+
 <div class="card">
 
 <div class="top">
@@ -147,19 +175,26 @@ Choose your preferred payment method.
 </a>
 
 <div class="footer">
-Instant processing available.
+Instant payment processing available.
 </div>
 
 </div>
+
 `;
+
 }
 
 function upi(){
 
-window.location.href =
-"upi://pay?pa=digamberraj7903@ptaxis&pn=Digamber%20Raj&cu=INR";
+const upiLink =
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
+
+setTimeout(() => {
+window.location.href = upiLink;
+},100);
 
 return `
+
 <div class="card">
 
 <div class="top">
@@ -171,21 +206,26 @@ return `
 Attempting to open your UPI app automatically.
 </div>
 
-<a class="btn upi"
-href="upi://pay?pa=digamberraj7903@ptaxis&pn=Digamber%20Raj&cu=INR">
+<a class="btn upi" href="${upiLink}">
 Open UPI App
 </a>
 
+<div id="qrcode"></div>
+
 <div class="footer">
-If nothing opens, use the button above manually.
+Scan QR if app did not open automatically.
 </div>
 
 </div>
+
 `;
+
 }
 
 function crypto(){
+
 return `
+
 <div class="card">
 
 <div class="top">
@@ -194,43 +234,57 @@ return `
 </div>
 
 <div class="desc">
-Choose your preferred BEP20 asset.
+Select your preferred BEP20 asset.
 </div>
 
-<button class="btn crypto" onclick="copyWallet('USDT')">
-Copy USDT (BEP20)
+<button class="btn crypto"
+onclick="showQR('USDT Address')">
+Copy USDT Address
 </button>
 
-<button class="btn crypto" onclick="copyWallet('BTC')">
-Copy BTCB (BEP20)
+<button class="btn crypto"
+onclick="showQR('Bitcoin Address')">
+Copy Bitcoin Address
 </button>
 
-<button class="btn crypto" onclick="copyWallet('LTC')">
-Copy LTC (BEP20)
+<button class="btn crypto"
+onclick="showQR('Litecoin Address')">
+Copy Litecoin Address
 </button>
 
-<button class="btn crypto" onclick="copyWallet('ETH')">
-Copy ETH (BEP20)
+<button class="btn crypto"
+onclick="showQR('Ethereum Address')">
+Copy Ethereum Address
 </button>
 
-<button class="btn crypto" onclick="copyWallet('ZEC')">
-Copy ZCash (BEP20)
+<button class="btn crypto"
+onclick="showQR('ZCash Address')">
+Copy ZCash Address
 </button>
 
-<button class="btn crypto" onclick="copyWallet('BNB')">
-Copy BNB (BEP20)
+<button class="btn crypto"
+onclick="showQR('BNB Address')">
+Copy BNB Address
 </button>
+
+<div id="qrcode"></div>
+
+<div class="wallet" id="walletText"></div>
 
 <div class="footer">
-Send valid blockchain proof after payment.
+Tap any asset to generate QR instantly.
 </div>
 
 </div>
+
 `;
+
 }
 
 function binance(){
+
 return `
+
 <div class="card">
 
 <div class="top">
@@ -242,61 +296,97 @@ return `
 Internal Binance transfers supported.
 </div>
 
-<button class="btn binance" onclick="copyUID()">
+<button class="btn binance"
+onclick="copyUID()">
 Copy Binance UID
 </button>
 
+<div id="qrcode"></div>
+
 <div class="wallet">
-UID: 814429508
+UID: ${BINANCE_UID}
 </div>
 
 <div class="footer">
-Lowest transfer delay available.
+Scan QR or copy UID manually.
 </div>
 
 </div>
+
 `;
+
+}
+
+function showQR(name){
+
+navigator.clipboard.writeText(WALLET);
+
+document.getElementById("walletText").innerHTML =
+name + "<br><br>" + WALLET;
+
+document.getElementById("qrcode").innerHTML = "";
+
+new QRCode(document.getElementById("qrcode"),{
+text: WALLET,
+width:180,
+height:180
+});
+
+alert(name + " copied");
+
 }
 
 function copyUID(){
-navigator.clipboard.writeText("814429508");
+
+navigator.clipboard.writeText(BINANCE_UID);
+
+document.getElementById("qrcode").innerHTML = "";
+
+new QRCode(document.getElementById("qrcode"),{
+text: BINANCE_UID,
+width:180,
+height:180
+});
+
 alert("Binance UID copied");
-}
 
-function copyWallet(type){
-
-const wallets = {
-
-USDT:"0x33aca3a213443730cf548b77b520f4f87df447ec",
-
-BTC:"0x33aca3a213443730cf548b77b520f4f87df447ec",
-
-LTC:"0x33aca3a213443730cf548b77b520f4f87df447ec",
-
-ETH:"0x33aca3a213443730cf548b77b520f4f87df447ec",
-
-ZEC:"0x33aca3a213443730cf548b77b520f4f87df447ec",
-
-BNB:"0x33aca3a213443730cf548b77b520f4f87df447ec"
-
-};
-
-navigator.clipboard.writeText(wallets[type]);
-
-alert(type + " wallet copied");
 }
 
 if(path === "/upi"){
+
 app.innerHTML = upi();
+
+setTimeout(() => {
+
+const upiLink =
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
+
+new QRCode(document.getElementById("qrcode"),{
+text: upiLink,
+width:180,
+height:180
+});
+
+},200);
+
 }
+
 else if(path === "/crypto"){
+
 app.innerHTML = crypto();
+
 }
+
 else if(path === "/binance"){
+
 app.innerHTML = binance();
+
 }
+
 else{
+
 app.innerHTML = home();
+
 }
 
 </script>
