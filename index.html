@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Payments</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <style>
 
 *{
@@ -123,6 +121,7 @@ margin-top:18px;
 }
 
 #qrcode img{
+width:180px;
 background:white;
 padding:10px;
 border-radius:14px;
@@ -187,7 +186,10 @@ Instant payment processing available.
 function upi(){
 
 const upiPayload =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&mc=0000&tid=${Date.now()}&tr=${Date.now()}&tn=Payment&am=1&cu=INR`;
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=1&cu=INR`;
+
+const qrURL =
+`https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiPayload)}`;
 
 setTimeout(() => {
 window.location.href = upiPayload;
@@ -210,7 +212,9 @@ Attempting to open your UPI app automatically.
 Open UPI App
 </a>
 
-<div id="qrcode"></div>
+<div id="qrcode">
+<img src="${qrURL}">
+</div>
 
 <div class="footer">
 Scan QR if app did not open automatically.
@@ -324,14 +328,11 @@ navigator.clipboard.writeText(WALLET);
 document.getElementById("walletText").innerHTML =
 name + "<br><br>" + WALLET;
 
-document.getElementById("qrcode").innerHTML = "";
+const qrURL =
+`https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(WALLET)}`;
 
-new QRCode(document.getElementById("qrcode"),{
-text: WALLET,
-width:180,
-height:180,
-correctLevel:QRCode.CorrectLevel.H
-});
+document.getElementById("qrcode").innerHTML =
+`<img src="${qrURL}">`;
 
 alert(name + " copied");
 
@@ -341,14 +342,11 @@ function copyUID(){
 
 navigator.clipboard.writeText(BINANCE_UID);
 
-document.getElementById("qrcode").innerHTML = "";
+const qrURL =
+`https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(BINANCE_UID)}`;
 
-new QRCode(document.getElementById("qrcode"),{
-text: BINANCE_UID,
-width:180,
-height:180,
-correctLevel:QRCode.CorrectLevel.H
-});
+document.getElementById("qrcode").innerHTML =
+`<img src="${qrURL}">`;
 
 alert("Binance UID copied");
 
@@ -357,25 +355,6 @@ alert("Binance UID copied");
 if(path === "/upi"){
 
 app.innerHTML = upi();
-
-setTimeout(() => {
-
-const upiPayload =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&mc=0000&tid=${Date.now()}&tr=${Date.now()}&tn=Payment&am=1&cu=INR`;
-
-const qrContainer =
-document.getElementById("qrcode");
-
-qrContainer.innerHTML = "";
-
-new QRCode(qrContainer,{
-text: upiPayload,
-width:180,
-height:180,
-correctLevel:QRCode.CorrectLevel.H
-});
-
-},200);
 
 }
 
