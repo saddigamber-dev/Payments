@@ -186,12 +186,12 @@ Instant payment processing available.
 
 function upi(){
 
-const upiLink =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
+const upiPayload =
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=&cu=INR`;
 
 setTimeout(() => {
-window.location.href = upiLink;
-},100);
+window.location.href = upiPayload;
+},1500);
 
 return `
 
@@ -206,7 +206,7 @@ return `
 Attempting to open your UPI app automatically.
 </div>
 
-<a class="btn upi" href="${upiLink}">
+<a class="btn upi" href="${upiPayload}">
 Open UPI App
 </a>
 
@@ -329,7 +329,8 @@ document.getElementById("qrcode").innerHTML = "";
 new QRCode(document.getElementById("qrcode"),{
 text: WALLET,
 width:180,
-height:180
+height:180,
+correctLevel:QRCode.CorrectLevel.H
 });
 
 alert(name + " copied");
@@ -345,7 +346,8 @@ document.getElementById("qrcode").innerHTML = "";
 new QRCode(document.getElementById("qrcode"),{
 text: BINANCE_UID,
 width:180,
-height:180
+height:180,
+correctLevel:QRCode.CorrectLevel.H
 });
 
 alert("Binance UID copied");
@@ -358,13 +360,19 @@ app.innerHTML = upi();
 
 setTimeout(() => {
 
-const upiLink =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
+const upiPayload =
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=&cu=INR`;
 
-new QRCode(document.getElementById("qrcode"),{
-text: upiLink,
+const qrContainer =
+document.getElementById("qrcode");
+
+qrContainer.innerHTML = "";
+
+new QRCode(qrContainer,{
+text: upiPayload,
 width:180,
-height:180
+height:180,
+correctLevel:QRCode.CorrectLevel.H
 });
 
 },200);
