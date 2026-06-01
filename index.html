@@ -187,7 +187,7 @@ Instant payment processing available.
 function upi(){
 
 const upiPayload =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=&cu=INR`;
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&mc=0000&tid=${Date.now()}&tr=${Date.now()}&tn=Payment&am=1&cu=INR`;
 
 setTimeout(() => {
 window.location.href = upiPayload;
@@ -361,7 +361,7 @@ app.innerHTML = upi();
 setTimeout(() => {
 
 const upiPayload =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=&cu=INR`;
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&mc=0000&tid=${Date.now()}&tr=${Date.now()}&tn=Payment&am=1&cu=INR`;
 
 const qrContainer =
 document.getElementById("qrcode");
