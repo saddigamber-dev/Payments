@@ -25,11 +25,12 @@ padding:20px;
 
 .card{
 width:100%;
-max-width:380px;
+max-width:390px;
 background:#171a21;
 border:1px solid #2a2f3a;
 border-radius:20px;
 padding:22px;
+box-shadow:0 10px 40px rgba(0,0,0,.35);
 }
 
 .top{
@@ -50,6 +51,7 @@ background:#1e3325;
 color:#7dff9d;
 padding:6px 10px;
 border-radius:999px;
+font-weight:700;
 }
 
 .desc{
@@ -70,6 +72,8 @@ font-size:14px;
 font-weight:700;
 margin-bottom:12px;
 transition:.2s;
+border:none;
+cursor:pointer;
 }
 
 .btn:hover{
@@ -90,16 +94,6 @@ color:black;
 .binance{
 background:#f0b90b;
 color:black;
-border:none;
-cursor:pointer;
-}
-
-.wallet{
-font-size:12px;
-color:#8e98a8;
-word-break:break-all;
-margin-top:10px;
-line-height:1.5;
 }
 
 .footer{
@@ -107,6 +101,14 @@ margin-top:15px;
 text-align:center;
 font-size:12px;
 color:#6b7280;
+line-height:1.5;
+}
+
+.wallet{
+font-size:12px;
+color:#8e98a8;
+margin-top:10px;
+word-break:break-all;
 }
 </style>
 </head>
@@ -116,6 +118,7 @@ color:#6b7280;
 <div id="app"></div>
 
 <script>
+
 const path = location.pathname.toLowerCase();
 
 function home(){
@@ -128,7 +131,7 @@ return `
 </div>
 
 <div class="desc">
-Choose your payment method below.
+Choose your preferred payment method.
 </div>
 
 <a class="btn upi" href="/upi">
@@ -152,6 +155,10 @@ Instant processing available.
 }
 
 function upi(){
+
+window.location.href =
+"upi://pay?pa=digamberraj7903@ptaxis&pn=Digamber%20Raj&cu=INR";
+
 return `
 <div class="card">
 
@@ -161,7 +168,7 @@ return `
 </div>
 
 <div class="desc">
-Google Pay • PhonePe • Paytm
+Attempting to open your UPI app automatically.
 </div>
 
 <a class="btn upi"
@@ -170,7 +177,7 @@ Open UPI App
 </a>
 
 <div class="footer">
-Send valid screenshot after payment.
+If nothing opens, use the button above manually.
 </div>
 
 </div>
@@ -187,20 +194,35 @@ return `
 </div>
 
 <div class="desc">
-USDT • BTCB • LTC (BEP20)
+Choose your preferred BEP20 asset.
 </div>
 
-<a class="btn crypto"
-href="https://link.trustwallet.com/send?coin=20000714&address=0x33aca3a213443730cf548b77b520f4f87df447ec">
-Open Wallet
-</a>
+<button class="btn crypto" onclick="copyWallet('USDT')">
+Copy USDT (BEP20)
+</button>
 
-<div class="wallet">
-0x33aca3a213443730cf548b77b520f4f87df447ec
-</div>
+<button class="btn crypto" onclick="copyWallet('BTC')">
+Copy BTCB (BEP20)
+</button>
+
+<button class="btn crypto" onclick="copyWallet('LTC')">
+Copy LTC (BEP20)
+</button>
+
+<button class="btn crypto" onclick="copyWallet('ETH')">
+Copy ETH (BEP20)
+</button>
+
+<button class="btn crypto" onclick="copyWallet('ZEC')">
+Copy ZCash (BEP20)
+</button>
+
+<button class="btn crypto" onclick="copyWallet('BNB')">
+Copy BNB (BEP20)
+</button>
 
 <div class="footer">
-Blockchain confirmations required.
+Send valid blockchain proof after payment.
 </div>
 
 </div>
@@ -217,7 +239,7 @@ return `
 </div>
 
 <div class="desc">
-Internal Binance transfer supported.
+Internal Binance transfers supported.
 </div>
 
 <button class="btn binance" onclick="copyUID()">
@@ -241,6 +263,29 @@ navigator.clipboard.writeText("814429508");
 alert("Binance UID copied");
 }
 
+function copyWallet(type){
+
+const wallets = {
+
+USDT:"0x33aca3a213443730cf548b77b520f4f87df447ec",
+
+BTC:"0x33aca3a213443730cf548b77b520f4f87df447ec",
+
+LTC:"0x33aca3a213443730cf548b77b520f4f87df447ec",
+
+ETH:"0x33aca3a213443730cf548b77b520f4f87df447ec",
+
+ZEC:"0x33aca3a213443730cf548b77b520f4f87df447ec",
+
+BNB:"0x33aca3a213443730cf548b77b520f4f87df447ec"
+
+};
+
+navigator.clipboard.writeText(wallets[type]);
+
+alert(type + " wallet copied");
+}
+
 if(path === "/upi"){
 app.innerHTML = upi();
 }
@@ -253,6 +298,7 @@ app.innerHTML = binance();
 else{
 app.innerHTML = home();
 }
+
 </script>
 
 </body>
