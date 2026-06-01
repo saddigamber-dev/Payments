@@ -187,7 +187,7 @@ Instant payment processing available.
 function upi(){
 
 const upiPayload =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=1&cu=INR`;
+`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
 
 const qrURL =
 `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiPayload)}`;
