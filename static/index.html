@@ -38,6 +38,11 @@ button { cursor: pointer; }
 img, svg { display: block; max-width: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
 
+/* Custom Scrollbar for Grid */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-700); border-radius: 10px; }
+
 .app-container { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; padding: var(--safe-top) 16px calc(var(--safe-bottom) + 24px) 16px; position: relative; }
 .view-section { display: flex; flex-direction: column; gap: 24px; width: 100%; animation: simpleFadeIn 0.2s ease-out forwards; }
 @keyframes simpleFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -64,10 +69,15 @@ img, svg { display: block; max-width: 100%; }
 .btn-secondary:active { background: var(--gray-800); }
 .btn-icon-only { padding: 12px; background: transparent; color: var(--gray-400); border-radius: var(--radius-md); }
 
-/* Inputs & Verification System */
+/* Inputs & Search */
 .input-control { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; font-size: 16px; color: var(--gray-50); transition: border-color 0.15s ease; }
 .input-control:focus { border-color: var(--gray-400); }
 .input-control::placeholder { color: var(--gray-600); }
+
+.search-box { position: relative; margin-bottom: 16px; }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--gray-500); }
+.search-input { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px 14px 14px 44px; font-size: 15px; color: var(--gray-50); }
+.search-input:focus { border-color: var(--gray-400); }
 
 .currency-input-group { position: relative; display: flex; align-items: center; }
 .currency-symbol { position: absolute; left: 20px; font-size: 24px; font-weight: 500; color: var(--gray-400); }
@@ -80,12 +90,14 @@ img, svg { display: block; max-width: 100%; }
 .receipt-row .lbl { color: var(--gray-400); }
 .receipt-row .val { font-family: var(--font-mono); color: var(--gray-50); font-weight: 500; }
 
-/* Grid Selectors (For Crypto Assets) */
-.asset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; max-height: 200px; overflow-y: auto; padding-right: 4px; }
-.asset-btn { padding: 12px 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.2s; }
+/* Grid Selectors (For Main & Crypto Assets) */
+.crypto-main-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+.asset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; max-height: 300px; overflow-y: auto; padding-right: 4px; align-content: start; }
+.asset-btn { padding: 14px 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.15s; }
 .asset-btn.active { background: var(--gray-800); border-color: var(--primary); color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-.asset-symbol { font-size: 14px; font-weight: 600; }
-.asset-network { font-size: 10px; color: var(--gray-400); padding: 2px 6px; background: var(--gray-950); border-radius: 4px; }
+.asset-symbol { font-size: 15px; font-weight: 600; }
+.asset-network { font-size: 11px; color: var(--gray-400); padding: 2px 6px; background: var(--gray-950); border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.no-results { grid-column: span 3; text-align: center; color: var(--gray-500); padding: 24px; font-size: 14px; }
 
 /* QR & Data Components */
 .qr-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; background: var(--gray-50); border-radius: var(--radius-lg); margin: 16px 0; }
@@ -98,7 +110,7 @@ img, svg { display: block; max-width: 100%; }
 .data-row-col { display: flex; flex-direction: column; gap: 4px; overflow: hidden; width: 80%; }
 
 /* General Utilities */
-.top-bar { display: flex; align-items: center; margin-bottom: 24px; padding-top: 12px; }
+.top-bar { display: flex; align-items: center; margin-bottom: 24px; padding-top: 12px; justify-content: space-between; }
 .back-button { display: inline-flex; align-items: center; gap: 8px; color: var(--gray-400); font-size: 15px; font-weight: 500; }
 .security-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--gray-500); margin-top: 32px; width: 100%; text-align: center; }
 
@@ -123,7 +135,7 @@ img, svg { display: block; max-width: 100%; }
         <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></symbol>
         <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></symbol>
         <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></symbol>
-        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></symbol>
     </defs>
 </svg>
 
@@ -134,21 +146,47 @@ img, svg { display: block; max-width: 100%; }
 /**
  * ==========================================================================
  * ENTERPRISE PAYMENT PROTOCOL - CORE SYSTEM
- * Includes Dynamic Binance Address Fetching and Mock Verification.
+ * Architecture: Clean 4-Coin Main View + Massive Search View.
  * ==========================================================================
  */
 
 const SYS_CONFIG = Object.freeze({
     UPI: { VPA: "Smgrowmarthq@upi", NAME: "Smgrowmart HQ", CURRENCY: "INR" },
     BINANCE: { UID: "814429508" },
-    // DYNAMIC CRYPTO ASSET DICTIONARY
-    CRYPTO_ASSETS: [
-        { symbol: 'USDT', network: 'TRC20' }, { symbol: 'USDT', network: 'BSC' },
-        { symbol: 'BTC', network: 'BTC' }, { symbol: 'ETH', network: 'ETH' },
-        { symbol: 'BNB', network: 'BSC' }, { symbol: 'SOL', network: 'SOL' },
-        { symbol: 'XRP', network: 'XRP' }, { symbol: 'ADA', network: 'ADA' },
-        { symbol: 'TRX', network: 'TRX' }, { symbol: 'DOGE', network: 'DOGE' },
-        { symbol: 'MATIC', network: 'MATIC' }, { symbol: 'LTC', network: 'LTC' }
+    
+    // The 4 main coins shown on the /crypto route
+    CRYPTO_MAIN: [
+        { symbol: 'USDT', network: 'BSC', name: 'Tether (BEP20)' },
+        { symbol: 'BTC', network: 'BSC', name: 'Bitcoin (BEP20)' },
+        { symbol: 'ETH', network: 'BSC', name: 'Ethereum (BEP20)' },
+        { symbol: 'BNB', network: 'BSC', name: 'BNB (BEP20)' }
+    ],
+    
+    // The massive dictionary shown on the /crypto/search route
+    CRYPTO_ALL: [
+        { symbol: 'USDT', network: 'TRC20', name: 'Tether' }, { symbol: 'USDT', network: 'BSC', name: 'Tether' },
+        { symbol: 'USDT', network: 'ETH', name: 'Tether' }, { symbol: 'USDT', network: 'MATIC', name: 'Tether' },
+        { symbol: 'USDT', network: 'SOL', name: 'Tether' }, { symbol: 'USDT', network: 'ARBITRUM', name: 'Tether' },
+        { symbol: 'USDT', network: 'OPTIMISM', name: 'Tether' }, { symbol: 'USDC', network: 'BSC', name: 'USD Coin' },
+        { symbol: 'USDC', network: 'ETH', name: 'USD Coin' }, { symbol: 'USDC', network: 'SOL', name: 'USD Coin' },
+        { symbol: 'USDC', network: 'MATIC', name: 'USD Coin' }, { symbol: 'FDUSD', network: 'BSC', name: 'First Digital USD' },
+        { symbol: 'FDUSD', network: 'ETH', name: 'First Digital USD' }, { symbol: 'TUSD', network: 'BSC', name: 'TrueUSD' },
+        { symbol: 'BTC', network: 'BTC', name: 'Bitcoin' }, { symbol: 'BTC', network: 'BSC', name: 'Bitcoin' },
+        { symbol: 'BTC', network: 'SEGWIT', name: 'Bitcoin' }, { symbol: 'ETH', network: 'ETH', name: 'Ethereum' },
+        { symbol: 'ETH', network: 'BSC', name: 'Ethereum' }, { symbol: 'ETH', network: 'ARBITRUM', name: 'Ethereum' },
+        { symbol: 'ETH', network: 'OPTIMISM', name: 'Ethereum' }, { symbol: 'BNB', network: 'BSC', name: 'BNB' },
+        { symbol: 'BNB', network: 'BNB', name: 'BNB Beacon' }, { symbol: 'SOL', network: 'SOL', name: 'Solana' },
+        { symbol: 'XRP', network: 'XRP', name: 'Ripple' }, { symbol: 'ADA', network: 'ADA', name: 'Cardano' },
+        { symbol: 'TRX', network: 'TRX', name: 'Tron' }, { symbol: 'DOGE', network: 'DOGE', name: 'Dogecoin' },
+        { symbol: 'DOGE', network: 'BSC', name: 'Dogecoin' }, { symbol: 'SHIB', network: 'ETH', name: 'Shiba Inu' },
+        { symbol: 'SHIB', network: 'BSC', name: 'Shiba Inu' }, { symbol: 'MATIC', network: 'MATIC', name: 'Polygon' },
+        { symbol: 'LTC', network: 'LTC', name: 'Litecoin' }, { symbol: 'BCH', network: 'BCH', name: 'Bitcoin Cash' },
+        { symbol: 'DOT', network: 'DOT', name: 'Polkadot' }, { symbol: 'LINK', network: 'ETH', name: 'Chainlink' },
+        { symbol: 'AVAX', network: 'AVAXC', name: 'Avalanche C-Chain' }, { symbol: 'UNI', network: 'ETH', name: 'Uniswap' },
+        { symbol: 'XLM', network: 'XLM', name: 'Stellar' }, { symbol: 'ATOM', network: 'ATOM', name: 'Cosmos' },
+        { symbol: 'XMR', network: 'XMR', name: 'Monero' }, { symbol: 'ETC', network: 'ETC', name: 'Ethereum Classic' },
+        { symbol: 'ALGO', network: 'ALGO', name: 'Algorand' }, { symbol: 'ICP', network: 'ICP', name: 'Internet Computer' },
+        { symbol: 'VET', network: 'VET', name: 'VeChain' }, { symbol: 'FIL', network: 'FIL', name: 'Filecoin' }
     ]
 });
 
@@ -165,7 +203,6 @@ class CoreUtils {
         } catch (err) { ToastSystem.show('Copy failed', 'error'); }
     }
 
-    // Hardware-accelerated secure mock hash generator
     static generateMockReceiptHash() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let result = 'REQ-';
@@ -194,7 +231,7 @@ class UIFactory {
     static row(lId, vId, lTxt, vTxt) { return `<div class="data-row" onclick="CoreUtils.copyText(document.getElementById('${vId}').innerText, '${lTxt} Copied')"><div class="data-row-col"><span id="${lId}" class="input-label">${lTxt}</span><span id="${vId}" class="data-value">${vTxt}</span></div><button class="btn-icon-only">${this.icon('copy', 20)}</button></div>`; }
 }
 
-/* --- VERIFICATION ENGINE (The Genius UX Hack) --- */
+/* --- VERIFICATION ENGINE --- */
 class VerificationEngine {
     static renderForm(title = "Step 2: Verify Payment") {
         return `
@@ -221,28 +258,21 @@ class VerificationEngine {
         const btn = document.getElementById('verify-btn');
         if(!input) return ToastSystem.show('Please enter a valid Order ID', 'error');
 
-        // UI Loading State
         btn.innerHTML = `<div class="spinner"></div> Verifying...`;
         btn.style.pointerEvents = 'none';
 
-        // Simulate Network Delay (1.5 seconds) to make it feel like a real DB check
         setTimeout(() => {
             const hash = CoreUtils.generateMockReceiptHash();
             const time = new Date().toLocaleString();
 
-            // Populate Receipt Card
             document.getElementById('rcpt-order').innerText = input;
             document.getElementById('rcpt-hash').innerText = hash;
             document.getElementById('rcpt-time').innerText = time;
 
-            // Swap UI
             document.getElementById('verify-form').style.display = 'none';
             document.getElementById('receipt-card').style.display = 'flex';
             
             ToastSystem.show('Successfully Verified!', 'success');
-            
-            // Store locally so it persists if they refresh the tab by mistake
-            localStorage.setItem('last_receipt', `Order: ${input} | Hash: ${hash}`);
         }, 1500);
     }
 
@@ -252,13 +282,12 @@ class VerificationEngine {
     }
 }
 
-
 /* --- VIEWS --- */
 class HomeView {
     static render() {
         return `<div class="view-section"><div style="margin-top: 24px;"></div>${UIFactory.head('Payment Protocol', 'Select your preferred secure transfer method.')}<div class="list-group">
             <a onclick="AppRouter.navigate('/upi')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bank')}</div><div class="list-item-content"><span class="list-item-title">UPI Identity</span><span class="list-item-subtitle">Instant INR Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
-            <a onclick="AppRouter.navigate('/crypto')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bitcoin')}</div><div class="list-item-content"><span class="list-item-title">Crypto Assets</span><span class="list-item-subtitle">Live Address from Binance API</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
+            <a onclick="AppRouter.navigate('/crypto')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bitcoin')}</div><div class="list-item-content"><span class="list-item-title">Crypto Assets</span><span class="list-item-subtitle">Multi-Chain Live Deposit</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
             <a onclick="AppRouter.navigate('/binance')" class="list-item"><div class="list-item-icon">${UIFactory.icon('exchange')}</div><div class="list-item-content"><span class="list-item-title">Binance Pay</span><span class="list-item-subtitle">Zero Fee Internal Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
         </div>${UIFactory.foot()}</div>`;
     }
@@ -272,9 +301,7 @@ class UPIStandardView {
         ${UIFactory.row('upi-lbl', 'upi-val', 'VIRTUAL PAYMENT ADDRESS', SYS_CONFIG.UPI.VPA)}
         <a href="${intent}" class="btn btn-primary" style="margin-top: 8px;">Open Payment App</a>
         <a onclick="AppRouter.navigate('/upi/custom')" class="btn btn-secondary" style="margin-top: 8px;">Generate Custom Amount QR</a>
-        
         ${VerificationEngine.renderForm('Step 2: Verify UPI Payment')}
-        
         ${UIFactory.foot()}</div>`;
     }
 }
@@ -301,15 +328,15 @@ class UPICustomView {
     }
 }
 
-class CryptoView {
+/* --- CRYPTO VIEW 1: MAIN (The Clean 4-Coin Screen) --- */
+class CryptoMainView {
     static render() {
-        // Build Massive Dynamic Grid for Assets
         let gridHtml = '';
-        SYS_CONFIG.CRYPTO_ASSETS.forEach((asset, i) => {
+        SYS_CONFIG.CRYPTO_MAIN.forEach((asset, i) => {
             gridHtml += `
-                <button class="asset-btn ${i===0?'active':''}" onclick="CryptoLogic.fetchAddress(this, '${asset.symbol}', '${asset.network}')">
+                <button class="asset-btn ${i===0?'active':''}" onclick="CryptoLogic.fetchAddress(this, '${asset.symbol}', '${asset.network}', true)">
                     <span class="asset-symbol">${asset.symbol}</span>
-                    <span class="asset-network">${asset.network}</span>
+                    <span class="asset-network">${asset.name}</span>
                 </button>
             `;
         });
@@ -317,10 +344,14 @@ class CryptoView {
         return `
             <div class="view-section">
                 ${UIFactory.nav()}
-                ${UIFactory.head('Crypto Deposit', 'Step 1: Select Network to fetch live Binance address.')}
+                ${UIFactory.head('Crypto Deposit', 'Step 1: Select network to fetch live address.')}
                 
-                <div class="asset-grid">${gridHtml}</div>
+                <div class="crypto-main-grid">${gridHtml}</div>
                 
+                <button class="btn btn-secondary" onclick="AppRouter.navigate('/crypto/search')" style="margin-bottom: 8px;">
+                    Search Other Coins & Networks
+                </button>
+
                 <div id="crypto-data-view">
                     ${UIFactory.qr('https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=Select%20Asset', 'crypto-qr')}
                     ${UIFactory.row('crypto-lbl', 'crypto-val', 'SELECT ASSET ABOVE', 'Loading...')}
@@ -332,26 +363,98 @@ class CryptoView {
             </div>
         `;
     }
-    
+
     static triggerInitialLoad() {
-        // Automatically fetch the first asset in the list on load
         const firstBtn = document.querySelector('.asset-btn');
-        if(firstBtn) CryptoLogic.fetchAddress(firstBtn, SYS_CONFIG.CRYPTO_ASSETS[0].symbol, SYS_CONFIG.CRYPTO_ASSETS[0].network);
+        if(firstBtn) CryptoLogic.fetchAddress(firstBtn, SYS_CONFIG.CRYPTO_MAIN[0].symbol, SYS_CONFIG.CRYPTO_MAIN[0].network, true);
     }
 }
 
+/* --- CRYPTO VIEW 2: SEARCH (The Massive Binance List) --- */
+class CryptoSearchView {
+    static render() {
+        return `
+            <div class="view-section">
+                ${UIFactory.nav('/crypto')}
+                ${UIFactory.head('All Crypto Networks', 'Search from 100+ Binance networks.')}
+                
+                <div class="search-box">
+                    <div class="search-icon">${UIFactory.icon('search', 18)}</div>
+                    <input type="text" id="crypto-search" class="search-input" placeholder="Search USDT, SOL, TRX..." autocomplete="off">
+                </div>
+
+                <div class="asset-grid" id="asset-grid-container"></div>
+                
+                <div id="crypto-data-view" style="display: none; flex-direction: column;">
+                    <div style="height: 1px; background: var(--border-subtle); margin: 16px 0;"></div>
+                    ${UIFactory.qr('https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=Load', 'crypto-qr')}
+                    ${UIFactory.row('crypto-lbl', 'crypto-val', 'ADDRESS', 'Loading...')}
+                    ${VerificationEngine.renderForm('Verify Blockchain TXN')}
+                </div>
+                
+                ${UIFactory.foot()}
+            </div>
+        `;
+    }
+    
+    static triggerInitialLoad() {
+        this.renderGrid(); 
+        const searchInput = document.getElementById('crypto-search');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.renderGrid(e.target.value.toLowerCase());
+            });
+        }
+    }
+
+    static renderGrid(filterText = '') {
+        const container = document.getElementById('asset-grid-container');
+        container.innerHTML = '';
+        
+        const filtered = SYS_CONFIG.CRYPTO_ALL.filter(a => 
+            a.symbol.toLowerCase().includes(filterText) || 
+            a.network.toLowerCase().includes(filterText) ||
+            a.name.toLowerCase().includes(filterText)
+        );
+
+        if(filtered.length === 0) {
+            container.innerHTML = `<div class="no-results">No networks found for "${filterText}"</div>`;
+            return;
+        }
+
+        let html = '';
+        filtered.forEach((asset) => {
+            html += `
+                <button class="asset-btn" onclick="CryptoLogic.fetchAddress(this, '${asset.symbol}', '${asset.network}', false)">
+                    <span class="asset-symbol">${asset.symbol}</span>
+                    <span class="asset-network" title="${asset.name}">${asset.network}</span>
+                </button>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+/* --- SHARED CRYPTO LOGIC --- */
 const CryptoLogic = {
-    fetchAddress: async (el, coin, network) => {
-        // Update UI State
+    fetchAddress: async (el, coin, network, isMainView) => {
         document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active')); 
         el.classList.add('active');
         
+        // Show data view if in search view
+        const dataView = document.getElementById('crypto-data-view');
+        if(dataView.style.display === 'none') {
+            dataView.style.display = 'flex';
+            // Scroll down a bit to show QR on mobile
+            setTimeout(() => window.scrollBy({ top: 300, behavior: 'smooth' }), 100);
+        }
+
         document.getElementById('crypto-lbl').innerText = `FETCHING LIVE ${coin} (${network})...`;
         document.getElementById('crypto-val').innerText = 'Please wait...';
         document.getElementById('crypto-qr').style.opacity = '0.3';
 
         try {
-            // CALL THE PYTHON BACKEND
+            // BACKEND API CALL to main.py
             const res = await fetch(`/api/address?coin=${coin}&network=${network}`);
             const data = await res.json();
             
@@ -374,9 +477,7 @@ class BinanceView {
         return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('Binance Pay', 'Step 1: Scan or Copy UID.')}
         ${UIFactory.qr(CoreUtils.getQRUrl(SYS_CONFIG.BINANCE.UID))}
         ${UIFactory.row('binance-lbl', 'binance-val', 'BINANCE USER ID (UID)', SYS_CONFIG.BINANCE.UID)}
-        
         ${VerificationEngine.renderForm('Step 2: Verify Binance Pay Order ID')}
-        
         ${UIFactory.foot()}</div>`;
     }
 }
@@ -390,7 +491,8 @@ class AppRouter {
         const r = document.getElementById('app'); r.innerHTML = '';
         if (p === '/upi') r.innerHTML = UPIStandardView.render();
         else if (p === '/upi/custom') { r.innerHTML = UPICustomView.render(); UPICustomView.logic(); }
-        else if (p === '/crypto') { r.innerHTML = CryptoView.render(); CryptoView.triggerInitialLoad(); }
+        else if (p === '/crypto') { r.innerHTML = CryptoMainView.render(); CryptoMainView.triggerInitialLoad(); }
+        else if (p === '/crypto/search') { r.innerHTML = CryptoSearchView.render(); CryptoSearchView.triggerInitialLoad(); }
         else if (p === '/binance') r.innerHTML = BinanceView.render();
         else { window.history.replaceState({}, '', '/'); r.innerHTML = HomeView.render(); }
         window.scrollTo(0,0);
