@@ -1,450 +1,949 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premium Secure Payments</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enterprise Payment Gateway</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
-<style>
-:root {
-    --bg-gradient: linear-gradient(135deg, #090a0f 0%, #121520 100%);
-    --card-bg: rgba(22, 26, 38, 0.8);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
-    --accent-upi: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-    --accent-crypto: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    --accent-binance: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
-    --status-active: #10b981;
-    --status-active-bg: rgba(16, 185, 129, 0.15);
-}
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEME CONFIGURATION
+           ========================================================================== */
+        :root {
+            --bg-base: #030712;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --bg-surface-hover: rgba(31, 41, 55, 0.8);
+            --border-light: rgba(255, 255, 255, 0.06);
+            --border-focus: rgba(99, 102, 241, 0.5);
+            
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-accent: #818cf8;
+            
+            --brand-upi: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            --brand-crypto: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            --brand-binance: linear-gradient(135deg, #eab308 0%, #a16207 100%);
+            
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --success-text: #34d399;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --warning-text: #fbbf24;
+            
+            --shadow-glow: 0 0 40px rgba(79, 70, 229, 0.15);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.2s ease;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
-}
+        /* ==========================================================================
+           2. GLOBAL RESETS & TYPOGRAPHY
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-body {
-    background: var(--bg-gradient);
-    color: var(--text-primary);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    overflow-x: hidden;
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-.card {
-    width: 100%;
-    max-width: 400px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 24px;
-    padding: 28px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
+        /* Particle Background Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        /* ==========================================================================
+           3. MAIN LAYOUT & GLASSMORPHISM CARDS
+           ========================================================================== */
+        #app-mount {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+            perspective: 1000px;
+        }
 
-.top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+        .gateway-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            box-shadow: var(--shadow-glow), inset 0 1px 1px rgba(255,255,255,0.05);
+            animation: cardEnter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            transform-origin: center top;
+        }
 
-.title-container {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+        @keyframes cardEnter {
+            0% { opacity: 0; transform: translateY(20px) scale(0.98) rotateX(-5deg); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
+        }
 
-.title {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
+        /* ==========================================================================
+           4. HEADER & BADGES
+           ========================================================================== */
+        .header-stack {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
 
-.status {
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    background: var(--status-active-bg);
-    color: var(--status-active);
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-weight: 700;
-    border: 1px solid rgba(16, 185, 129, 0.2);
-}
+        .brand-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
 
-.desc {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-    line-height: 1.6;
-}
+        .brand-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
 
-.btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 15px;
-    border-radius: 14px;
-    text-decoration: none;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-}
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--success-bg);
+            color: var(--success-text);
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
 
-.btn::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.08);
-    opacity: 0;
-    transition: opacity 0.2s;
-}
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success-text);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success-text);
+            animation: pulse 2s infinite;
+        }
 
-.btn:hover::after {
-    opacity: 1;
-}
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-}
+        /* ==========================================================================
+           5. INTERACTIVE COMPONENTS (BUTTONS & LISTS)
+           ========================================================================== */
+        .method-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
 
-.btn:active {
-    transform: translateY(0);
-}
+        .btn-premium {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 18px 20px;
+            background: var(--bg-surface-hover);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
 
-.upi { background: var(--accent-upi); color: white; }
-.crypto { background: var(--accent-crypto); color: #000000; }
-.binance { background: var(--accent-binance); color: #000000; }
+        .btn-premium:hover {
+            border-color: var(--border-focus);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
 
-.btn-back {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    margin-top: 10px;
-}
+        .btn-premium:active { transform: translateY(0); }
 
-.btn-back:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            margin-right: 16px;
+            flex-shrink: 0;
+            z-index: 2;
+        }
 
-.network-alert {
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    color: #fcd34d;
-    font-size: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    margin-bottom: 16px;
-    text-align: center;
-    font-weight: 500;
-}
+        .icon-upi { background: var(--brand-upi); }
+        .icon-crypto { background: var(--brand-crypto); }
+        .icon-binance { background: var(--brand-binance); }
 
-.footer {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 12px;
-    color: #64748b;
-    line-height: 1.5;
-    font-weight: 500;
-}
+        .btn-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            z-index: 2;
+        }
 
-.wallet {
-    font-size: 13px;
-    color: #cbd5e1;
-    margin-top: 20px;
-    padding: 14px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    word-break: break-all;
-    text-align: center;
-    line-height: 1.6;
-}
+        .btn-title { font-weight: 600; font-size: 15px; }
+        .btn-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 500;}
 
-.wallet-label {
-    font-size: 11px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
+        .btn-chevron {
+            margin-left: auto;
+            color: var(--text-muted);
+            transition: var(--transition-fast);
+            z-index: 2;
+        }
 
-#qrcode {
-    display: flex;
-    justify-content: center;
-    margin-top: 22px;
-    animation: fadeIn 0.3s ease-out;
-}
+        .btn-premium:hover .btn-chevron {
+            transform: translateX(4px);
+            color: var(--text-main);
+        }
 
-#qrcode img {
-    width: 190px;
-    height: 190px;
-    background: white;
-    padding: 12px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
+        /* Hover Glow Effect inside Button */
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+            z-index: 1;
+        }
+        .btn-premium:hover::before { left: 150%; }
 
-.toast-container {
-    position: fixed;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-}
+        /* ==========================================================================
+           6. PAYMENT SPECIFIC UI (QR CODES & WALLETS)
+           ========================================================================== */
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 24px 0;
+            padding: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            position: relative;
+            min-height: 250px;
+            justify-content: center;
+        }
 
-.toast {
-    background: #1e293b;
-    color: white;
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    pointer-events: auto;
-    animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        .qr-box {
+            width: 200px;
+            height: 200px;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            transition: var(--transition-smooth);
+            animation: fadeInScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-@keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
 
-.toast.fade-out {
-    animation: slideUp 0.25s ease-in forwards;
-}
+        .qr-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
 
-@keyframes slideUp {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-20px); opacity: 0; }
-}
-</style>
+        /* Loading Skeleton for QR */
+        .skeleton {
+            background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+            background-size: 200% 100%;
+            animation: loadingSkeleton 1.5s infinite linear;
+            border-radius: var(--radius-sm);
+            width: 176px; height: 176px;
+        }
+
+        @keyframes loadingSkeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .wallet-address-box {
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .wallet-address-box:hover {
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.6);
+        }
+
+        .wallet-label {
+            font-size: 11px;
+            color: var(--text-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .wallet-string {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 14px;
+            color: var(--text-main);
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        .copy-hint {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            opacity: 0.5;
+            transition: var(--transition-fast);
+        }
+
+        .wallet-address-box:hover .copy-hint { opacity: 1; color: var(--text-accent); }
+
+        /* ==========================================================================
+           7. NAVIGATION & UTILITIES
+           ========================================================================== */
+        .back-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: var(--transition-fast);
+        }
+
+        .back-nav:hover { color: var(--text-main); transform: translateX(-4px); }
+
+        .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 24px 0;
+            width: 100%;
+        }
+
+        .footer-secure {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .alert-box {
+            background: var(--warning-bg);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: var(--warning-text);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Grid for Crypto Options */
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .crypto-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-light);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .crypto-btn:hover, .crypto-btn.active {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--border-focus);
+            color: var(--text-accent);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+
+        .action-btn:hover { background: #e5e7eb; transform: translateY(-2px); }
+
+        /* ==========================================================================
+           8. TOAST NOTIFICATION SYSTEM
+           ========================================================================== */
+        #toast-layer {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast-msg {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            pointer-events: auto;
+            animation: toastEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes toastEnter {
+            0% { opacity: 0; transform: translateY(50px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .toast-msg.hide { animation: toastExit 0.3s ease-in forwards; }
+
+        @keyframes toastExit {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        .toast-icon {
+            display: flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px;
+            background: var(--success-text);
+            border-radius: 50%;
+            color: #000;
+        }
+    </style>
 </head>
-
 <body>
 
-<div id="app"></div>
-<div class="toast-container" id="toastContainer"></div>
+    <!-- Dynamic Particle Background -->
+    <canvas id="particle-canvas"></canvas>
 
-<script>
-const UPI_ID = "digamberraj7903@ptaxis";
-const UPI_NAME = "Digamber Raj";
-const BINANCE_UID = "814429508";
-const WALLET = "0x33aca3a213443730cf548b77b520f4f87df447ec";
+    <!-- Embedded SVG Asset Library (Zero External Requests = Premium Performance) -->
+    <svg style="display: none;">
+        <defs>
+            <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </symbol>
+            <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </symbol>
+            <symbol id="icon-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </symbol>
+            <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </symbol>
+            <symbol id="icon-upi-logo" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </symbol>
+            <symbol id="icon-btc" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.312m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
+            </symbol>
+            <symbol id="icon-binance-logo" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 12l10 10 10-10L12 2zm0 4.5l5.5 5.5-5.5 5.5L6.5 12 12 6.5z"></path>
+            </symbol>
+            <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </symbol>
+            <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </symbol>
+        </defs>
+    </svg>
 
-function showToast(message) {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `🌟 <span>${message}</span>`;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.classList.add('fade-out');
-        toast.addEventListener('animationend', () => toast.remove());
-    }, 2500);
-}
-
-// Clean Path Navigation
-function navigate(route) {
-    window.history.pushState({}, '', route);
-    renderApp();
-}
-
-function home() {
-    return `
-        <div class="card">
-            <div class="top">
-                <div class="title-container">
-                    <div class="title">💳 Payment Gateway</div>
-                </div>
-                <div class="status">SECURE</div>
-            </div>
-            <div class="desc">
-                Select your preferred institutional or decentralized gateway module below to settle your balance.
-            </div>
-            <button class="btn upi" onclick="navigate('/upi')">
-                🇮🇳 UPI Payment
-            </button>
-            <button class="btn crypto" onclick="navigate('/crypto')">
-                ₿ Crypto Assets
-            </button>
-            <button class="btn binance" onclick="navigate('/binance')">
-                🟡 Binance Pay
-            </button>
-            <div class="footer">
-                🔒 Layer-2 end-to-end payment encryption active.
-            </div>
-        </div>
-    `;
-}
-
-function upi() {
-    const upiPayload = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
-    const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiPayload)}`;
-
-    setTimeout(() => {
-        window.location.href = upiPayload;
-    }, 1200);
-
-    return `
-        <div class="card">
-            <div class="top">
-                <div class="title-container">
-                    <div class="title">🇮🇳 Unified Payments</div>
-                </div>
-                <div class="status">AUTOMATED</div>
-            </div>
-            <div class="desc">
-                Initializing deep-linking routines. Launching your default system UPI application suite...
-            </div>
-            <a class="btn upi" href="${upiPayload}">
-                Manually Open App
-            </a>
-            <div id="qrcode">
-                <img src="${qrURL}" alt="UPI Dynamic QR Code">
-            </div>
-            <button class="btn btn-back" onclick="navigate('/')">← Return to Gateway</button>
-            <div class="footer">
-                If your ecosystem fails to auto-launch, capture or scan the matrix structure manually.
-            </div>
-        </div>
-    `;
-}
-
-function crypto() {
-    return `
-        <div class="card">
-            <div class="top">
-                <div class="title-container">
-                    <div class="title">₿ Multi-Chain Crypto</div>
-                </div>
-                <div class="status">BSC NETWORK</div>
-            </div>
-            <div class="network-alert">
-                ⚠️ Verification warning: Transfer funds exclusively via the BSC (BEP20) layer token framework.
-            </div>
-            <div class="desc">
-                Select a native smart contract asset below to dynamically resolve the recipient address framework.
-            </div>
-            <button class="btn crypto" onclick="showQR('USDT Address (BEP20)')">Copy USDT Address</button>
-            <button class="btn crypto" onclick="showQR('Bitcoin Address (BEP20)')">Copy BTCB Address</button>
-            <button class="btn crypto" onclick="showQR('Litecoin Address (BEP20)')">Copy LTC Address</button>
-            <button class="btn crypto" onclick="showQR('Ethereum Address (BEP20)')">Copy ETH Address</button>
-            <button class="btn crypto" onclick="showQR('BNB Address (BEP20)')">Copy BNB Address</button>
-            
-            <div id="qrcode"></div>
-            <div class="wallet" id="walletText" style="display:none;"></div>
-            
-            <button class="btn btn-back" onclick="navigate('/')">← Return to Gateway</button>
-            <div class="footer">
-                Asset mapping generates synchronized target cryptographic payloads on demand.
-            </div>
-        </div>
-    `;
-}
-
-function binance() {
-    return `
-        <div class="card">
-            <div class="top">
-                <div class="title-container">
-                    <div class="title">🟡 Binance Ecosystem</div>
-                </div>
-                <div class="status">0% FEE</div>
-            </div>
-            <div class="desc">
-                Settle transaction instantly using internal ledger book transfers through the Binance application architecture.
-            </div>
-            <button class="btn binance" onclick="copyUID()">
-                Copy Binance UID
-            </button>
-            <div id="qrcode"></div>
-            <div class="wallet">
-                <div class="wallet-label">Target Account User ID</div>
-                <strong>${BINANCE_UID}</strong>
-            </div>
-            <button class="btn btn-back" onclick="navigate('/')">← Return to Gateway</button>
-            <div class="footer">
-                Execute cross-border account internal allocations using the calculated address above.
-            </div>
-        </div>
-    `;
-}
-
-function showQR(assetName) {
-    navigator.clipboard.writeText(WALLET).then(() => {
-        const targetElement = document.getElementById("walletText");
-        targetElement.style.display = "block";
-        targetElement.innerHTML = `<div class="wallet-label">${assetName}</div><strong>${WALLET}</strong>`;
-        
-        const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(WALLET)}`;
-        document.getElementById("qrcode").innerHTML = `<img src="${qrURL}" alt="Crypto QR Code">`;
-        
-        showToast(`${assetName.split(' ')[0]} address copied to clipboard.`);
-    }).catch(err => console.error('Could not copy text: ', err));
-}
-
-function copyUID() {
-    navigator.clipboard.writeText(BINANCE_UID).then(() => {
-        const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(BINANCE_UID)}`;
-        document.getElementById("qrcode").innerHTML = `<img src="${qrURL}" alt="Binance UID QR Code">`;
-        
-        showToast("Binance UID copied successfully.");
-    }).catch(err => console.error('Could not copy text: ', err));
-}
-
-function renderApp() {
-    const currentPath = window.location.pathname.toLowerCase();
-    const appContainer = document.getElementById("app");
+    <!-- UI Mount Point -->
+    <main id="app-mount"></main>
     
-    if (currentPath === "/upi") {
-        appContainer.innerHTML = upi();
-    } else if (currentPath === "/crypto") {
-        appContainer.innerHTML = crypto();
-    } else if (currentPath === "/binance") {
-        appContainer.innerHTML = binance();
-    } else {
-        appContainer.innerHTML = home();
-    }
-}
+    <!-- Toast Notification Layer -->
+    <div id="toast-layer"></div>
 
-// Listeners for Back/Forward Browser Buttons and Initial Load
-window.addEventListener('popstate', renderApp);
-window.addEventListener('DOMContentLoaded', renderApp);
-</script>
+    <script>
+        /**
+         * ENTERPRISE PAYMENT GATEWAY CORE
+         * Architecture: Strict OOP, History API Routing, Event-Driven UI.
+         */
 
+        // --- Configuration Models ---
+        const CONFIG = {
+            UPI: {
+                id: "digamberraj7903@ptaxis",
+                name: "Digamber Raj"
+            },
+            BINANCE: {
+                uid: "814429508"
+            },
+            CRYPTO: {
+                wallet: "0x33aca3a213443730cf548b77b520f4f87df447ec",
+                networks: [
+                    { id: 'usdt', name: 'USDT', std: 'BEP20' },
+                    { id: 'btcb', name: 'BTCB', std: 'BEP20' },
+                    { id: 'eth', name: 'ETH', std: 'BEP20' },
+                    { id: 'bnb', name: 'BNB', std: 'BEP20' }
+                ]
+            }
+        };
+
+        // --- System Utilities ---
+        class Utils {
+            static generateQRUrl(data, size = 250) {
+                return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}&margin=10`;
+            }
+
+            static async copyToClipboard(text, successMessage) {
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                    } else {
+                        // Fallback for older browsers/non-https
+                        const textArea = document.createElement("textarea");
+                        textArea.value = text;
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        document.execCommand('copy');
+                        textArea.remove();
+                    }
+                    NotificationSystem.toast(successMessage);
+                } catch (err) {
+                    console.error('Clipboard fault:', err);
+                    NotificationSystem.toast('Copy failed. Please select and copy manually.');
+                }
+            }
+        }
+
+        // --- Notification Engine ---
+        class NotificationSystem {
+            static toast(message) {
+                const layer = document.getElementById('toast-layer');
+                const el = document.createElement('div');
+                el.className = 'toast-msg';
+                el.innerHTML = `
+                    <div class="toast-icon">
+                        <svg width="14" height="14"><use href="#icon-check"></use></svg>
+                    </div>
+                    <span>${message}</span>
+                `;
+                
+                layer.appendChild(el);
+
+                // Auto destroy logic
+                setTimeout(() => {
+                    el.classList.add('hide');
+                    el.addEventListener('animationend', () => el.remove());
+                }, 3000);
+            }
+        }
+
+        // --- View Controllers ---
+        class ViewFactory {
+            static getBaseHeader(title, subtitle) {
+                return `
+                    <div class="header-stack">
+                        <div>
+                            <h1 class="brand-title">${title}</h1>
+                            <p class="brand-subtitle">${subtitle}</p>
+                        </div>
+                        <div class="status-badge">
+                            <div class="status-dot"></div> Active
+                        </div>
+                    </div>
+                `;
+            }
+
+            static getFooter() {
+                return `
+                    <div class="divider"></div>
+                    <div class="footer-secure">
+                        <svg width="16" height="16"><use href="#icon-shield"></use></svg>
+                        End-to-End 256-bit Encryption
+                    </div>
+                `;
+            }
+
+            static buildHome() {
+                return `
+                    <div class="gateway-card">
+                        ${this.getBaseHeader('Select Gateway', 'Choose an institutional or decentralized payment rail.')}
+                        
+                        <div class="method-list">
+                            <a href="javascript:void(0)" onclick="AppRouter.navigate('/upi')" class="btn-premium">
+                                <div class="btn-icon icon-upi">
+                                    <svg width="20" height="20"><use href="#icon-upi-logo"></use></svg>
+                                </div>
+                                <div class="btn-content">
+                                    <span class="btn-title">UPI Identity</span>
+                                    <span class="btn-desc">Instant Transfer • INR</span>
+                                </div>
+                                <svg class="btn-chevron" width="20" height="20"><use href="#icon-chevron"></use></svg>
+                            </a>
+
+                            <a href="javascript:void(0)" onclick="AppRouter.navigate('/crypto')" class="btn-premium">
+                                <div class="btn-icon icon-crypto">
+                                    <svg width="20" height="20"><use href="#icon-btc"></use></svg>
+                                </div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Crypto Asset</span>
+                                    <span class="btn-desc">Decentralized • BEP20 Network</span>
+                                </div>
+                                <svg class="btn-chevron" width="20" height="20"><use href="#icon-chevron"></use></svg>
+                            </a>
+
+                            <a href="javascript:void(0)" onclick="AppRouter.navigate('/binance')" class="btn-premium">
+                                <div class="btn-icon icon-binance">
+                                    <svg width="20" height="20"><use href="#icon-binance-logo"></use></svg>
+                                </div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Binance Pay</span>
+                                    <span class="btn-desc">Zero Fee • Internal Ledger</span>
+                                </div>
+                                <svg class="btn-chevron" width="20" height="20"><use href="#icon-chevron"></use></svg>
+                            </a>
+                        </div>
+                        ${this.getFooter()}
+                    </div>
+                `;
+            }
+
+            static buildUPI() {
+                const intent = `upi://pay?pa=${CONFIG.UPI.id}&pn=${encodeURIComponent(CONFIG.UPI.name)}&cu=INR`;
+                const qr = Utils.generateQRUrl(intent);
+
+                // Auto trigger intent after short delay for UX
+                setTimeout(() => { window.location.href = intent; }, 1500);
+
+                return `
+                    <div class="gateway-card">
+                        <a href="javascript:void(0)" onclick="AppRouter.navigate('/')" class="back-nav">
+                            <svg width="18" height="18"><use href="#icon-back"></use></svg> Return
+                        </a>
+                        ${this.getBaseHeader('UPI Payment', 'Scan code or open app directly')}
+                        
+                        <div class="qr-container">
+                            <div class="qr-box" id="qr-render">
+                                <div class="skeleton"></div>
+                                <img src="${qr}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'" alt="UPI QR">
+                            </div>
+                        </div>
+
+                        <div class="wallet-address-box" onclick="Utils.copyToClipboard('${CONFIG.UPI.id}', 'UPI ID Copied')">
+                            <div class="wallet-label">VPA / UPI ID</div>
+                            <div class="wallet-string">${CONFIG.UPI.id}</div>
+                            <svg class="copy-hint" width="18" height="18"><use href="#icon-copy"></use></svg>
+                        </div>
+
+                        <a href="${intent}" class="action-btn">
+                            Open Payment App
+                        </a>
+                        ${this.getFooter()}
+                    </div>
+                `;
+            }
+
+            static buildCrypto() {
+                let buttons = '';
+                CONFIG.CRYPTO.networks.forEach(net => {
+                    buttons += `<button class="crypto-btn" onclick="CryptoController.selectAsset('${net.name}')">${net.name}</button>`;
+                });
+
+                return `
+                    <div class="gateway-card">
+                        <a href="javascript:void(0)" onclick="AppRouter.navigate('/')" class="back-nav">
+                            <svg width="18" height="18"><use href="#icon-back"></use></svg> Return
+                        </a>
+                        ${this.getBaseHeader('Crypto Deposit', 'Select asset to generate payload')}
+                        
+                        <div class="alert-box">
+                            <svg width="24" height="24" style="flex-shrink:0"><use href="#icon-alert"></use></svg>
+                            Send ONLY via BSC (BEP20) network. Other networks will result in permanent loss.
+                        </div>
+
+                        <div class="crypto-grid">
+                            ${buttons}
+                        </div>
+
+                        <div id="crypto-dynamic-area" style="display:none; animation: cardEnter 0.4s ease forwards;">
+                            <div class="qr-container">
+                                <div class="qr-box" id="crypto-qr-box"></div>
+                            </div>
+                            
+                            <div class="wallet-address-box" onclick="Utils.copyToClipboard('${CONFIG.CRYPTO.wallet}', 'Wallet Address Copied')">
+                                <div class="wallet-label" id="crypto-label">DEPOSIT ADDRESS</div>
+                                <div class="wallet-string">${CONFIG.CRYPTO.wallet}</div>
+                                <svg class="copy-hint" width="18" height="18"><use href="#icon-copy"></use></svg>
+                            </div>
+                        </div>
+                        ${this.getFooter()}
+                    </div>
+                `;
+            }
+
+            static buildBinance() {
+                const qr = Utils.generateQRUrl(CONFIG.BINANCE.uid);
+                
+                return `
+                    <div class="gateway-card">
+                        <a href="javascript:void(0)" onclick="AppRouter.navigate('/')" class="back-nav">
+                            <svg width="18" height="18"><use href="#icon-back"></use></svg> Return
+                        </a>
+                        ${this.getBaseHeader('Binance Pay', 'Instant zero-fee internal transfer')}
+                        
+                        <div class="qr-container">
+                            <div class="qr-box">
+                                <div class="skeleton"></div>
+                                <img src="${qr}" onload="this.previousElementSibling.style.display='none'" alt="Binance QR">
+                            </div>
+                        </div>
+
+                        <div class="wallet-address-box" onclick="Utils.copyToClipboard('${CONFIG.BINANCE.uid}', 'Binance UID Copied')">
+                            <div class="wallet-label">PAY ID / UID</div>
+                            <div class="wallet-string" style="font-size: 20px; font-weight: 700; text-align: center;">${CONFIG.BINANCE.uid}</div>
+                            <svg class="copy-hint" width="18" height="18"><use href="#icon-copy"></use></svg>
+                        </div>
+
+                        <button onclick="Utils.copyToClipboard('${CONFIG.BINANCE.uid}', 'Binance UID Copied')" class="action-btn">
+                            Copy Binance UID
+                        </button>
+                        ${this.getFooter()}
+                    </div>
+                `;
+            }
+        }
+
+        // --- Specialized Controllers ---
+        class CryptoController {
+            static selectAsset(assetName) {
+                // Update active button state
+                document.querySelectorAll('.crypto-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if(btn.innerText === assetName) btn.classList.add('active');
+                });
+
+                // Show dynamic area
+                const area = document.getElementById('crypto-dynamic-area');
+                area.style.display = 'block';
+
+                // Update UI elements
+                document.getElementById('crypto-label').innerText = `${assetName} (BEP20) ADDRESS`;
+                
+                // Generate QR
+                const qrUrl = Utils.generateQRUrl(CONFIG.CRYPTO.wallet);
+                const qrBox = document.getElementById('crypto-qr-box');
+                qrBox.innerHTML = `<div class="skeleton"></div><img src="${qrUrl}" onload="this.previousElementSibling.style.display='none'" alt="Crypto QR">`;
+
+                NotificationSystem.toast(`Ready for ${assetName} deposits`);
+            }
+        }
+
+        // --- Routing Engine ---
+        class AppRouter {
+            static init() {
+                window.addEventListener('popstate', () => this.renderCurrentRoute());
+                this.renderCurrentRoute();
+            }
+
+            static navigate(path) {
+                window.history.pushState({}, '', path);
+                this.renderCurrentRoute();
+            }
+
+            static renderCurrentRoute() {
+                const path = window.location.pathname.toLowerCase();
+                const mount = document.getElementById('app-mount');
+                
+                // Unmount animation prep if needed, but simple innerHTML swap is fast
+                let viewHtml = '';
+
+                switch (path) {
+                    case '/upi':
+                        viewHtml = ViewFactory.buildUPI();
+                        break;
+                    case '/crypto':
+                        viewHtml = ViewFactory.buildCrypto();
+                        break;
+                    case '/binance':
+                        viewHtml = ViewFactory.buildBinance();
+                        break;
+                    default:
+                        viewHtml = ViewFactory.buildHome();
+                        // If invalid path, force URL correction silently
+                        if(path !== '/' && path !== '') {
+                            window.history.replaceState({}, '', '/');
+                        }
+                        break;
+                }
+
+                mount.innerHTML = viewHtml;
+            }
+        }
+
+        // --- Premium Particle Canvas Background Engine ---
+        class ParticleEngine {
+            constructor() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.density = 45; // Nodes count
+                
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                this.initParticles();
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            initParticles() {
+                this.particles = [];
+                for (let i = 0; i < this.density; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 2 + 0.5
+                    });
+                }
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                for (let i = 0; i < this.density; i++) {
+                    let p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Boundary bounce
+                    if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+
+                    // Draw Node
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = 'rgba(99, 102, 241, 0.4)';
+                    this.ctx.fill();
+
+                    // Draw connections
+                    for (let j = i + 1; j < this.density; j++) {
+                        let p2 = this.particles[j];
+                        let dx = p.x - p2.x;
+                        let dy = p.y - p2.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 120) {
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(p.x, p.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                            this.ctx.strokeStyle = `rgba(99, 102, 241, ${0.15 - distance / 800})`;
+                            this.ctx.lineWidth = 1;
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- Bootstrapper ---
+        document.addEventListener('DOMContentLoaded', () => {
+            new ParticleEngine(); // Start visual background
+            AppRouter.init();     // Start routing logic
+        });
+
+    </script>
 </body>
 </html>
