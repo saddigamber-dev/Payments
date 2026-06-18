@@ -39,7 +39,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Premium Card Design */
 .card {
     width: 100%;
     max-width: 400px;
@@ -94,7 +93,6 @@ body {
     line-height: 1.6;
 }
 
-/* Interactive Modern Buttons */
 .btn {
     display: flex;
     align-items: center;
@@ -137,22 +135,10 @@ body {
     transform: translateY(0);
 }
 
-.upi {
-    background: var(--accent-upi);
-    color: white;
-}
+.upi { background: var(--accent-upi); color: white; }
+.crypto { background: var(--accent-crypto); color: #000000; }
+.binance { background: var(--accent-binance); color: #000000; }
 
-.crypto {
-    background: var(--accent-crypto);
-    color: #000000;
-}
-
-.binance {
-    background: var(--accent-binance);
-    color: #000000;
-}
-
-/* Secondary Actions / Back Button */
 .btn-back {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-primary);
@@ -223,7 +209,6 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* High-End Toast Notification System */
 .toast-container {
     position: fixed;
     top: 24px;
@@ -274,13 +259,11 @@ body {
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// Payment Configurations
 const UPI_ID = "digamberraj7903@ptaxis";
 const UPI_NAME = "Digamber Raj";
 const BINANCE_UID = "814429508";
 const WALLET = "0x33aca3a213443730cf548b77b520f4f87df447ec";
 
-// Premium Toast Notification Engine
 function showToast(message) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -294,9 +277,9 @@ function showToast(message) {
     }, 2500);
 }
 
-// Global UI Navigation Controller (Prevents 404 routing breaks on static hosts)
+// Clean Path Navigation
 function navigate(route) {
-    window.location.hash = route;
+    window.history.pushState({}, '', route);
     renderApp();
 }
 
@@ -312,13 +295,13 @@ function home() {
             <div class="desc">
                 Select your preferred institutional or decentralized gateway module below to settle your balance.
             </div>
-            <button class="btn upi" onclick="navigate('upi')">
+            <button class="btn upi" onclick="navigate('/upi')">
                 🇮🇳 UPI Payment
             </button>
-            <button class="btn crypto" onclick="navigate('crypto')">
+            <button class="btn crypto" onclick="navigate('/crypto')">
                 ₿ Crypto Assets
             </button>
-            <button class="btn binance" onclick="navigate('binance')">
+            <button class="btn binance" onclick="navigate('/binance')">
                 🟡 Binance Pay
             </button>
             <div class="footer">
@@ -353,7 +336,7 @@ function upi() {
             <div id="qrcode">
                 <img src="${qrURL}" alt="UPI Dynamic QR Code">
             </div>
-            <button class="btn btn-back" onclick="navigate('')">← Return to Gateway</button>
+            <button class="btn btn-back" onclick="navigate('/')">← Return to Gateway</button>
             <div class="footer">
                 If your ecosystem fails to auto-launch, capture or scan the matrix structure manually.
             </div>
@@ -385,7 +368,7 @@ function crypto() {
             <div id="qrcode"></div>
             <div class="wallet" id="walletText" style="display:none;"></div>
             
-            <button class="btn btn-back" onclick="navigate('')">← Return to Gateway</button>
+            <button class="btn btn-back" onclick="navigate('/')">← Return to Gateway</button>
             <div class="footer">
                 Asset mapping generates synchronized target cryptographic payloads on demand.
             </div>
@@ -413,7 +396,7 @@ function binance() {
                 <div class="wallet-label">Target Account User ID</div>
                 <strong>${BINANCE_UID}</strong>
             </div>
-            <button class="btn btn-back" onclick="navigate('')">← Return to Gateway</button>
+            <button class="btn btn-back" onclick="navigate('/')">← Return to Gateway</button>
             <div class="footer">
                 Execute cross-border account internal allocations using the calculated address above.
             </div>
@@ -421,7 +404,6 @@ function binance() {
     `;
 }
 
-// Interaction Engines
 function showQR(assetName) {
     navigator.clipboard.writeText(WALLET).then(() => {
         const targetElement = document.getElementById("walletText");
@@ -432,9 +414,7 @@ function showQR(assetName) {
         document.getElementById("qrcode").innerHTML = `<img src="${qrURL}" alt="Crypto QR Code">`;
         
         showToast(`${assetName.split(' ')[0]} address copied to clipboard.`);
-    }).catch(err => {
-        console.error('Could not copy text: ', err);
-    });
+    }).catch(err => console.error('Could not copy text: ', err));
 }
 
 function copyUID() {
@@ -443,30 +423,27 @@ function copyUID() {
         document.getElementById("qrcode").innerHTML = `<img src="${qrURL}" alt="Binance UID QR Code">`;
         
         showToast("Binance UID copied successfully.");
-    }).catch(err => {
-        console.error('Could not copy text: ', err);
-    });
+    }).catch(err => console.error('Could not copy text: ', err));
 }
 
-// Router Lifecycle Management
 function renderApp() {
-    const currentHash = window.location.hash.replace('#', '').toLowerCase();
+    const currentPath = window.location.pathname.toLowerCase();
     const appContainer = document.getElementById("app");
     
-    if (currentHash === "upi") {
+    if (currentPath === "/upi") {
         appContainer.innerHTML = upi();
-    } else if (currentHash === "crypto") {
+    } else if (currentPath === "/crypto") {
         appContainer.innerHTML = crypto();
-    } else if (currentHash === "binance") {
+    } else if (currentPath === "/binance") {
         appContainer.innerHTML = binance();
     } else {
         appContainer.innerHTML = home();
     }
 }
 
-// Initialize Router State Event Handlers
-window.addEventListener('hashchange', renderApp);
-window.addEventListener('load', renderApp);
+// Listeners for Back/Forward Browser Buttons and Initial Load
+window.addEventListener('popstate', renderApp);
+window.addEventListener('DOMContentLoaded', renderApp);
 </script>
 
 </body>
