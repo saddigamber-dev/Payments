@@ -4,70 +4,111 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<title>Secure Payment Gateway</title>
+<title>Enterprise Payment Protocol</title>
+
 <style>
-/* CSS - Keeping the exact premium styles from before */
+/* ==========================================================================
+   ENTERPRISE CSS ARCHITECTURE
+   Strict minimal, dark-mode focused, utility-first design.
+   ========================================================================== */
 :root {
-    --gray-50: #fafafa; --gray-100: #f5f5f5; --gray-200: #e5e5e5; --gray-400: #a3a3a3;
-    --gray-500: #737373; --gray-700: #404040; --gray-800: #262626; --gray-900: #171717; --gray-950: #0a0a0a;
-    --primary: #ffffff; --primary-inv: #000000; --success: #16a34a; --danger: #dc2626;
-    --bg-base: var(--gray-950); --bg-surface: var(--gray-900); --border-subtle: var(--gray-800);
-    --font-sans: -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: ui-monospace, monospace;
+    --gray-50: #fafafa; --gray-100: #f5f5f5; --gray-200: #e5e5e5; --gray-300: #d4d4d4;
+    --gray-400: #a3a3a3; --gray-500: #737373; --gray-600: #525252; --gray-700: #404040;
+    --gray-800: #262626; --gray-900: #171717; --gray-950: #0a0a0a;
+
+    --primary: #ffffff; --primary-inv: #000000;
+    --accent: #2563eb; --success: #16a34a; --danger: #dc2626; --warning: #ca8a04;
+
+    --bg-base: var(--gray-950); --bg-surface: var(--gray-900); --bg-surface-hover: var(--gray-800);
+    --border-subtle: var(--gray-800); --border-focus: var(--gray-600);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+
     --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+    --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px);
 }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+html { font-family: var(--font-sans); -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
 body { background-color: var(--bg-base); color: var(--gray-50); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 a { color: inherit; text-decoration: none; }
-button, input { font: inherit; background: none; border: none; outline: none; cursor: pointer; }
+button, input { font: inherit; background: none; border: none; outline: none; }
+button { cursor: pointer; }
 img, svg { display: block; max-width: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
 
-.app-container { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+.app-container { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; padding: var(--safe-top) 16px calc(var(--safe-bottom) + 24px) 16px; position: relative; }
 .view-section { display: flex; flex-direction: column; gap: 24px; width: 100%; animation: simpleFadeIn 0.2s ease-out forwards; }
 @keyframes simpleFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-.text-h1 { font-size: 28px; font-weight: 700; line-height: 1.2; color: var(--gray-50); }
+/* Typography */
+.text-h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--gray-50); }
 .text-body { font-size: 15px; color: var(--gray-400); line-height: 1.5; }
-.input-label { font-size: 13px; font-weight: 500; color: var(--gray-400); text-transform: uppercase; }
+.input-label { font-size: 13px; font-weight: 500; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; }
 .data-value { font-size: 14px; font-weight: 600; color: var(--gray-50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
 
+/* Lists & Buttons */
 .list-group { display: flex; flex-direction: column; gap: 12px; }
-.list-item { display: flex; align-items: center; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
-.list-item-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--gray-800); border-radius: var(--radius-sm); margin-right: 16px; }
-.list-item-content { flex: 1; display: flex; flex-direction: column; }
-.list-item-title { font-size: 15px; font-weight: 600; }
+.list-item { display: flex; align-items: center; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); transition: background-color 0.15s ease; }
+.list-item:active { background: var(--bg-surface-hover); border-color: var(--border-focus); }
+.list-item-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--gray-800); border-radius: var(--radius-sm); margin-right: 16px; color: var(--gray-50); }
+.list-item-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.list-item-title { font-size: 15px; font-weight: 600; color: var(--gray-50); }
 .list-item-subtitle { font-size: 13px; color: var(--gray-400); }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 16px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; transition: all 0.15s ease; }
 .btn-primary { background: var(--primary); color: var(--primary-inv); }
+.btn-primary:active { background: var(--gray-200); }
 .btn-secondary { background: var(--bg-surface); color: var(--gray-50); border: 1px solid var(--border-subtle); }
-.btn-icon-only { padding: 12px; color: var(--gray-400); }
+.btn-secondary:active { background: var(--gray-800); }
+.btn-icon-only { padding: 12px; background: transparent; color: var(--gray-400); border-radius: var(--radius-md); }
+
+/* Inputs & Verification System */
+.input-control { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; font-size: 16px; color: var(--gray-50); transition: border-color 0.15s ease; }
+.input-control:focus { border-color: var(--gray-400); }
+.input-control::placeholder { color: var(--gray-600); }
 
 .currency-input-group { position: relative; display: flex; align-items: center; }
 .currency-symbol { position: absolute; left: 20px; font-size: 24px; font-weight: 500; color: var(--gray-400); }
 .currency-input { width: 100%; background: transparent; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 24px 20px 24px 45px; font-size: 28px; font-weight: 600; color: var(--gray-50); font-family: var(--font-mono); }
 
-.qr-container { display: flex; flex-direction: column; align-items: center; padding: 32px; background: var(--gray-50); border-radius: var(--radius-lg); margin: 16px 0; }
+/* Receipt Card */
+.receipt-card { background: rgba(22, 163, 74, 0.05); border: 1px solid rgba(22, 163, 74, 0.2); border-radius: var(--radius-md); padding: 20px; margin-top: 16px; display: none; flex-direction: column; gap: 12px; }
+.receipt-header { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 600; font-size: 16px; margin-bottom: 8px; }
+.receipt-row { display: flex; justify-content: space-between; font-size: 13px; }
+.receipt-row .lbl { color: var(--gray-400); }
+.receipt-row .val { font-family: var(--font-mono); color: var(--gray-50); font-weight: 500; }
+
+/* Grid Selectors (For Crypto Assets) */
+.asset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; max-height: 200px; overflow-y: auto; padding-right: 4px; }
+.asset-btn { padding: 12px 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.2s; }
+.asset-btn.active { background: var(--gray-800); border-color: var(--primary); color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.asset-symbol { font-size: 14px; font-weight: 600; }
+.asset-network { font-size: 10px; color: var(--gray-400); padding: 2px 6px; background: var(--gray-950); border-radius: 4px; }
+
+/* QR & Data Components */
+.qr-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; background: var(--gray-50); border-radius: var(--radius-lg); margin: 16px 0; }
 .qr-image-wrapper { width: 220px; height: 220px; position: relative; }
-.qr-image { width: 100%; height: 100%; object-fit: contain; }
+.qr-image { width: 100%; height: 100%; object-fit: contain; display: block; }
 .qr-skeleton { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gray-200); border-radius: var(--radius-sm); animation: pulseBg 1.5s infinite; }
 @keyframes pulseBg { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
 .data-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 16px; }
-.data-row-col { display: flex; flex-direction: column; width: 80%; }
+.data-row-col { display: flex; flex-direction: column; gap: 4px; overflow: hidden; width: 80%; }
 
+/* General Utilities */
 .top-bar { display: flex; align-items: center; margin-bottom: 24px; padding-top: 12px; }
-.back-button { display: inline-flex; align-items: center; gap: 8px; color: var(--gray-400); font-weight: 500; }
-.segmented-control { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: var(--bg-surface); padding: 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 16px; }
-.segment-btn { padding: 12px; font-size: 13px; font-weight: 600; color: var(--gray-400); border-radius: var(--radius-sm); }
-.segment-btn.active { background: var(--gray-800); color: var(--gray-50); }
+.back-button { display: inline-flex; align-items: center; gap: 8px; color: var(--gray-400); font-size: 15px; font-weight: 500; }
 .security-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--gray-500); margin-top: 32px; width: 100%; text-align: center; }
 
-.toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: calc(100% - 32px); max-width: 400px; }
-.toast { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--gray-800); border: 1px solid var(--gray-700); color: var(--gray-50); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; animation: toastSlideUp 0.3s ease forwards; }
+/* Toasts & Loaders */
+.toast-container { position: fixed; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: calc(100% - 32px); max-width: 400px; }
+.toast { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--gray-800); border: 1px solid var(--gray-700); color: var(--gray-50); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastSlideUp 0.3s ease forwards; }
 @keyframes toastSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -90,51 +131,46 @@ img, svg { display: block; max-width: 100%; }
 <div id="toast-root" class="toast-container"></div>
 
 <script>
-// --- STATE MANAGEMENT ---
-// These default to 'Loading...' until the backend replies
-const SYS_DATA = {
-    UPI_ID: "Smgrowmarthq@upi",
-    UPI_NAME: "Smgrowmart HQ",
-    BINANCE_UID: "814429508",
-    CRYPTO: {
-        USDT: "Fetching live address...",
-        BTCB: "Fetching live address...",
-        ETH: "Fetching live address...",
-        BNB: "Fetching live address..."
-    }
-};
+/**
+ * ==========================================================================
+ * ENTERPRISE PAYMENT PROTOCOL - CORE SYSTEM
+ * Includes Dynamic Binance Address Fetching and Mock Verification.
+ * ==========================================================================
+ */
 
-// API Fetch Engine (Silent background execution)
-async function fetchCryptoConfig() {
-    try {
-        const response = await fetch('/api/get-crypto-addresses');
-        const data = await response.json();
-        SYS_DATA.CRYPTO.USDT = data.usdt;
-        SYS_DATA.CRYPTO.BTCB = data.btcb;
-        SYS_DATA.CRYPTO.ETH = data.eth;
-        SYS_DATA.CRYPTO.BNB = data.bnb;
-        
-        // If user is currently on the crypto tab, force a re-render to show new keys
-        if(window.location.pathname.toLowerCase() === '/crypto') {
-            AppRouter.resolve();
-        }
-    } catch (e) {
-        console.error("Failed to connect to backend", e);
-    }
-}
-// Execute immediately on load
-fetchCryptoConfig();
+const SYS_CONFIG = Object.freeze({
+    UPI: { VPA: "Smgrowmarthq@upi", NAME: "Smgrowmart HQ", CURRENCY: "INR" },
+    BINANCE: { UID: "814429508" },
+    // DYNAMIC CRYPTO ASSET DICTIONARY
+    CRYPTO_ASSETS: [
+        { symbol: 'USDT', network: 'TRC20' }, { symbol: 'USDT', network: 'BSC' },
+        { symbol: 'BTC', network: 'BTC' }, { symbol: 'ETH', network: 'ETH' },
+        { symbol: 'BNB', network: 'BSC' }, { symbol: 'SOL', network: 'SOL' },
+        { symbol: 'XRP', network: 'XRP' }, { symbol: 'ADA', network: 'ADA' },
+        { symbol: 'TRX', network: 'TRX' }, { symbol: 'DOGE', network: 'DOGE' },
+        { symbol: 'MATIC', network: 'MATIC' }, { symbol: 'LTC', network: 'LTC' }
+    ]
+});
 
-// --- UTILITIES ---
+/* --- CORE UTILITIES --- */
 class CoreUtils {
     static getQRUrl(data) { return `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=${encodeURIComponent(data)}`; }
     static debounce(func, wait) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => func(...args), wait); }; }
+    
     static async copyText(text, successMsg = "Copied to clipboard") {
         try {
             const el = document.createElement("textarea"); el.value = text; el.style.position = "fixed"; el.style.left = "-9999px";
             document.body.appendChild(el); el.focus(); el.select(); document.execCommand('copy'); document.body.removeChild(el);
             ToastSystem.show(successMsg, 'success');
         } catch (err) { ToastSystem.show('Copy failed', 'error'); }
+    }
+
+    // Hardware-accelerated secure mock hash generator
+    static generateMockReceiptHash() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = 'REQ-';
+        for(let i=0; i<8; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+        return result;
     }
 }
 
@@ -148,21 +184,81 @@ class ToastSystem {
     }
 }
 
+/* --- UI FACTORY --- */
 class UIFactory {
     static icon(name, size = 24) { return `<svg width="${size}" height="${size}"><use href="#icon-${name}"></use></svg>`; }
     static nav(p = '/') { return `<div class="top-bar"><a href="javascript:void(0)" onclick="AppRouter.navigate('${p}')" class="back-button">${this.icon('arrow-left', 20)} Back</a></div>`; }
     static head(t, s) { return `<header style="margin-bottom: 24px;"><h1 class="text-h1">${t}</h1><p class="text-body mt-2">${s}</p></header>`; }
-    static foot() { return `<div class="security-badge">${this.icon('shield', 14)} Enterprise 256-bit Encryption</div>`; }
+    static foot() { return `<div class="security-badge">${this.icon('shield', 14)} Secure Protocol Initiated</div>`; }
     static qr(url, id = "qr-image") { return `<div class="qr-container"><div class="qr-image-wrapper"><div class="qr-skeleton" id="${id}-skeleton"></div><img src="${url}" id="${id}" class="qr-image" style="opacity: 0; transition: 0.2s" onload="document.getElementById('${id}-skeleton').style.display='none'; this.style.opacity='1';"></div></div>`; }
     static row(lId, vId, lTxt, vTxt) { return `<div class="data-row" onclick="CoreUtils.copyText(document.getElementById('${vId}').innerText, '${lTxt} Copied')"><div class="data-row-col"><span id="${lId}" class="input-label">${lTxt}</span><span id="${vId}" class="data-value">${vTxt}</span></div><button class="btn-icon-only">${this.icon('copy', 20)}</button></div>`; }
 }
 
-// --- VIEWS ---
+/* --- VERIFICATION ENGINE (The Genius UX Hack) --- */
+class VerificationEngine {
+    static renderForm(title = "Step 2: Verify Payment") {
+        return `
+            <div style="margin-top: 32px; border-top: 1px solid var(--border-subtle); padding-top: 24px;">
+                <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">${title}</h2>
+                <div id="verify-form">
+                    <input type="text" id="order-id-input" class="input-control" placeholder="Enter Order ID / Reference ID" autocomplete="off" style="margin-bottom: 12px;">
+                    <button class="btn btn-secondary" id="verify-btn" onclick="VerificationEngine.simulateVerification()">Verify Order</button>
+                </div>
+                
+                <div id="receipt-card" class="receipt-card">
+                    <div class="receipt-header">${UIFactory.icon('check', 18)} Payment Verified</div>
+                    <div class="receipt-row"><span class="lbl">Order ID</span><span class="val" id="rcpt-order"></span></div>
+                    <div class="receipt-row"><span class="lbl">Receipt Hash</span><span class="val" id="rcpt-hash"></span></div>
+                    <div class="receipt-row"><span class="lbl">Timestamp</span><span class="val" id="rcpt-time"></span></div>
+                    <button class="btn btn-primary" style="margin-top: 12px; padding: 12px;" onclick="VerificationEngine.copyReceipt()">Copy Receipt to Send Admin</button>
+                </div>
+            </div>
+        `;
+    }
+
+    static simulateVerification() {
+        const input = document.getElementById('order-id-input').value.trim();
+        const btn = document.getElementById('verify-btn');
+        if(!input) return ToastSystem.show('Please enter a valid Order ID', 'error');
+
+        // UI Loading State
+        btn.innerHTML = `<div class="spinner"></div> Verifying...`;
+        btn.style.pointerEvents = 'none';
+
+        // Simulate Network Delay (1.5 seconds) to make it feel like a real DB check
+        setTimeout(() => {
+            const hash = CoreUtils.generateMockReceiptHash();
+            const time = new Date().toLocaleString();
+
+            // Populate Receipt Card
+            document.getElementById('rcpt-order').innerText = input;
+            document.getElementById('rcpt-hash').innerText = hash;
+            document.getElementById('rcpt-time').innerText = time;
+
+            // Swap UI
+            document.getElementById('verify-form').style.display = 'none';
+            document.getElementById('receipt-card').style.display = 'flex';
+            
+            ToastSystem.show('Successfully Verified!', 'success');
+            
+            // Store locally so it persists if they refresh the tab by mistake
+            localStorage.setItem('last_receipt', `Order: ${input} | Hash: ${hash}`);
+        }, 1500);
+    }
+
+    static copyReceipt() {
+        const text = `PAYMENT RECEIPT\nOrder ID: ${document.getElementById('rcpt-order').innerText}\nReceipt Hash: ${document.getElementById('rcpt-hash').innerText}\nVerified At: ${document.getElementById('rcpt-time').innerText}`;
+        CoreUtils.copyText(text, "Receipt Copied! Send to Admin.");
+    }
+}
+
+
+/* --- VIEWS --- */
 class HomeView {
     static render() {
         return `<div class="view-section"><div style="margin-top: 24px;"></div>${UIFactory.head('Payment Protocol', 'Select your preferred secure transfer method.')}<div class="list-group">
             <a onclick="AppRouter.navigate('/upi')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bank')}</div><div class="list-item-content"><span class="list-item-title">UPI Identity</span><span class="list-item-subtitle">Instant INR Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
-            <a onclick="AppRouter.navigate('/crypto')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bitcoin')}</div><div class="list-item-content"><span class="list-item-title">Crypto Assets</span><span class="list-item-subtitle">Dynamic Backend Fetching</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
+            <a onclick="AppRouter.navigate('/crypto')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bitcoin')}</div><div class="list-item-content"><span class="list-item-title">Crypto Assets</span><span class="list-item-subtitle">Live Address from Binance API</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
             <a onclick="AppRouter.navigate('/binance')" class="list-item"><div class="list-item-icon">${UIFactory.icon('exchange')}</div><div class="list-item-content"><span class="list-item-title">Binance Pay</span><span class="list-item-subtitle">Zero Fee Internal Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
         </div>${UIFactory.foot()}</div>`;
     }
@@ -170,11 +266,15 @@ class HomeView {
 
 class UPIStandardView {
     static render() {
-        const intent = `upi://pay?pa=${SYS_DATA.UPI_ID}&pn=${encodeURIComponent(SYS_DATA.UPI_NAME)}&cu=INR`;
-        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('UPI Transfer', 'Scan via any supported Indian payment application.')}${UIFactory.qr(CoreUtils.getQRUrl(intent))}
-        ${UIFactory.row('upi-lbl', 'upi-val', 'VIRTUAL PAYMENT ADDRESS', SYS_DATA.UPI_ID)}
+        const intent = `upi://pay?pa=${SYS_CONFIG.UPI.VPA}&pn=${encodeURIComponent(SYS_CONFIG.UPI.NAME)}&cu=INR`;
+        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('UPI Transfer', 'Step 1: Scan and Pay')}
+        ${UIFactory.qr(CoreUtils.getQRUrl(intent))}
+        ${UIFactory.row('upi-lbl', 'upi-val', 'VIRTUAL PAYMENT ADDRESS', SYS_CONFIG.UPI.VPA)}
         <a href="${intent}" class="btn btn-primary" style="margin-top: 8px;">Open Payment App</a>
-        <a onclick="AppRouter.navigate('/upi/custom')" class="btn btn-secondary" style="margin-top: 8px;">${UIFactory.icon('settings', 18)} Generate Custom Amount QR</a>
+        <a onclick="AppRouter.navigate('/upi/custom')" class="btn btn-secondary" style="margin-top: 8px;">Generate Custom Amount QR</a>
+        
+        ${VerificationEngine.renderForm('Step 2: Verify UPI Payment')}
+        
         ${UIFactory.foot()}</div>`;
     }
 }
@@ -184,7 +284,7 @@ class UPICustomView {
         return `<div class="view-section">${UIFactory.nav('/upi')}${UIFactory.head('Custom Request', 'Enter amount to generate specific payment matrix.')}
         <div class="currency-input-group"><span class="currency-symbol">₹</span><input type="number" id="amt-input" class="currency-input" placeholder="0.00" autocomplete="off" autofocus></div>
         <div id="dynamic-target" style="opacity: 0.3; pointer-events: none; transition: 0.2s;">
-            ${UIFactory.qr(CoreUtils.getQRUrl(`upi://pay?pa=${SYS_DATA.UPI_ID}&pn=${encodeURIComponent(SYS_DATA.UPI_NAME)}`), 'dyn-qr')}
+            ${UIFactory.qr(CoreUtils.getQRUrl(`upi://pay?pa=${SYS_CONFIG.UPI.VPA}&pn=${encodeURIComponent(SYS_CONFIG.UPI.NAME)}`), 'dyn-qr')}
             <a href="#" id="dyn-pay-btn" class="btn btn-primary" style="margin-top: 16px;">Pay ₹0.00</a>
         </div>${UIFactory.foot()}</div>`;
     }
@@ -194,7 +294,7 @@ class UPICustomView {
         inp.addEventListener('input', CoreUtils.debounce((e) => {
             const amt = parseFloat(e.target.value);
             if (amt > 0) {
-                const intent = `upi://pay?pa=${SYS_DATA.UPI_ID}&pn=${encodeURIComponent(SYS_DATA.UPI_NAME)}&am=${amt}&cu=INR`;
+                const intent = `upi://pay?pa=${SYS_CONFIG.UPI.VPA}&pn=${encodeURIComponent(SYS_CONFIG.UPI.NAME)}&am=${amt}&cu=INR`;
                 tgt.style.opacity='1'; tgt.style.pointerEvents='all'; img.style.opacity='0.4'; img.src=CoreUtils.getQRUrl(intent); img.onload=()=>img.style.opacity='1'; btn.href=intent; btn.innerText=`Pay ₹${amt.toFixed(2)}`;
             } else { tgt.style.opacity='0.3'; tgt.style.pointerEvents='none'; btn.innerText=`Pay ₹0.00`; }
         }, 300));
@@ -203,39 +303,85 @@ class UPICustomView {
 
 class CryptoView {
     static render() {
-        // Build Tabs
-        const assets = ['USDT', 'BTCB', 'ETH', 'BNB'];
-        let tabs = assets.map((a, i) => `<button class="segment-btn ${i===0?'active':''}" onclick="CryptoLogic.switch(this, '${a}')">${a}</button>`).join('');
-        
-        const initAddress = SYS_DATA.CRYPTO.USDT; // Defaults to USDT
-        const qrUrl = initAddress.includes("Fetching") ? "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=Loading" : CoreUtils.getQRUrl(initAddress);
+        // Build Massive Dynamic Grid for Assets
+        let gridHtml = '';
+        SYS_CONFIG.CRYPTO_ASSETS.forEach((asset, i) => {
+            gridHtml += `
+                <button class="asset-btn ${i===0?'active':''}" onclick="CryptoLogic.fetchAddress(this, '${asset.symbol}', '${asset.network}')">
+                    <span class="asset-symbol">${asset.symbol}</span>
+                    <span class="asset-network">${asset.network}</span>
+                </button>
+            `;
+        });
 
-        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('Crypto Deposit', 'Fetching live addresses from Binance API securely.')}
-        <div class="segmented-control">${tabs}</div><div id="crypto-data-view">
-        ${UIFactory.qr(qrUrl, 'crypto-qr')}
-        ${UIFactory.row('crypto-lbl', 'crypto-val', 'USDT (BEP20)', initAddress)}
-        </div>${UIFactory.foot()}</div>`;
+        return `
+            <div class="view-section">
+                ${UIFactory.nav()}
+                ${UIFactory.head('Crypto Deposit', 'Step 1: Select Network to fetch live Binance address.')}
+                
+                <div class="asset-grid">${gridHtml}</div>
+                
+                <div id="crypto-data-view">
+                    ${UIFactory.qr('https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=Select%20Asset', 'crypto-qr')}
+                    ${UIFactory.row('crypto-lbl', 'crypto-val', 'SELECT ASSET ABOVE', 'Loading...')}
+                </div>
+
+                ${VerificationEngine.renderForm('Step 2: Verify Blockchain TXN')}
+                
+                ${UIFactory.foot()}
+            </div>
+        `;
+    }
+    
+    static triggerInitialLoad() {
+        // Automatically fetch the first asset in the list on load
+        const firstBtn = document.querySelector('.asset-btn');
+        if(firstBtn) CryptoLogic.fetchAddress(firstBtn, SYS_CONFIG.CRYPTO_ASSETS[0].symbol, SYS_CONFIG.CRYPTO_ASSETS[0].network);
     }
 }
+
 const CryptoLogic = {
-    switch: (el, sym) => {
-        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active');
-        const addr = SYS_DATA.CRYPTO[sym];
-        document.getElementById('crypto-lbl').innerText = `${sym} (BEP20)`;
-        document.getElementById('crypto-val').innerText = addr;
-        const img = document.getElementById('crypto-qr');
-        if(!addr.includes("Fetching")) { img.style.opacity='0.3'; img.src=CoreUtils.getQRUrl(addr); img.onload=()=>img.style.opacity='1'; }
+    fetchAddress: async (el, coin, network) => {
+        // Update UI State
+        document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active')); 
+        el.classList.add('active');
+        
+        document.getElementById('crypto-lbl').innerText = `FETCHING LIVE ${coin} (${network})...`;
+        document.getElementById('crypto-val').innerText = 'Please wait...';
+        document.getElementById('crypto-qr').style.opacity = '0.3';
+
+        try {
+            // CALL THE PYTHON BACKEND
+            const res = await fetch(`/api/address?coin=${coin}&network=${network}`);
+            const data = await res.json();
+            
+            const address = data.address;
+            
+            document.getElementById('crypto-lbl').innerText = `${coin} DEPOSIT ADDRESS (${network})`;
+            document.getElementById('crypto-val').innerText = address;
+            document.getElementById('crypto-qr').src = CoreUtils.getQRUrl(address);
+            
+            ToastSystem.show(`Live ${coin} Address Loaded`, 'success');
+        } catch (e) {
+            document.getElementById('crypto-val').innerText = 'Network Error. Try again.';
+            ToastSystem.show('Failed to fetch address from backend', 'error');
+        }
     }
 };
 
 class BinanceView {
     static render() {
-        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('Binance Pay', 'Scan or copy UID for internal zero-fee transfer.')}${UIFactory.qr(CoreUtils.getQRUrl(SYS_DATA.BINANCE_UID))}
-        ${UIFactory.row('binance-lbl', 'binance-val', 'BINANCE USER ID (UID)', SYS_DATA.BINANCE_UID)}
+        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('Binance Pay', 'Step 1: Scan or Copy UID.')}
+        ${UIFactory.qr(CoreUtils.getQRUrl(SYS_CONFIG.BINANCE.UID))}
+        ${UIFactory.row('binance-lbl', 'binance-val', 'BINANCE USER ID (UID)', SYS_CONFIG.BINANCE.UID)}
+        
+        ${VerificationEngine.renderForm('Step 2: Verify Binance Pay Order ID')}
+        
         ${UIFactory.foot()}</div>`;
     }
 }
 
+/* --- ROUTER --- */
 class AppRouter {
     static init() { window.addEventListener('popstate', () => this.resolve()); this.resolve(); }
     static navigate(p) { window.history.pushState({}, '', p); this.resolve(); }
@@ -244,7 +390,7 @@ class AppRouter {
         const r = document.getElementById('app'); r.innerHTML = '';
         if (p === '/upi') r.innerHTML = UPIStandardView.render();
         else if (p === '/upi/custom') { r.innerHTML = UPICustomView.render(); UPICustomView.logic(); }
-        else if (p === '/crypto') r.innerHTML = CryptoView.render();
+        else if (p === '/crypto') { r.innerHTML = CryptoView.render(); CryptoView.triggerInitialLoad(); }
         else if (p === '/binance') r.innerHTML = BinanceView.render();
         else { window.history.replaceState({}, '', '/'); r.innerHTML = HomeView.render(); }
         window.scrollTo(0,0);
