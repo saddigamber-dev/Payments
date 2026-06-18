@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
+<!-- Browser Favicon -->
 <link rel="icon" type="image/gif" href="https://cdn.discordapp.com/avatars/1445662258423271556/a_cac83a385e9f465714b581db09faf454.gif?size=1024">
 <title>SM GrowMart HQ Payment</title>
 
@@ -39,17 +40,37 @@ button { cursor: pointer; }
 img, svg { display: block; max-width: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
 
-/* Custom Scrollbar for Grid */
+/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--gray-700); border-radius: 10px; }
 
+/* Core Layout */
 .app-container { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; padding: var(--safe-top) 16px calc(var(--safe-bottom) + 24px) 16px; position: relative; }
-.view-section { display: flex; flex-direction: column; gap: 24px; width: 100%; animation: simpleFadeIn 0.3s ease-out forwards; }
-@keyframes simpleFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.view-section { display: flex; flex-direction: column; gap: 24px; width: 100%; animation: simpleFadeIn 0.2s ease-out forwards; }
+@keyframes simpleFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Branding & Typography */
-.brand-avatar { width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--border-subtle); box-shadow: 0 12px 30px rgba(0,0,0,0.6); object-fit: cover; margin-bottom: 16px; }
+/* ==========================================================================
+   GLOBAL BRANDING (The Always-On Corner Logo)
+   ========================================================================== */
+.global-floating-logo {
+    position: absolute;
+    top: max(16px, var(--safe-top));
+    right: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--border-subtle);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+    object-fit: cover;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.global-floating-logo:hover { border-color: var(--gray-400); transform: scale(1.05); }
+.global-floating-logo:active { transform: scale(0.95); }
+
+/* Typography */
 .text-h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--gray-50); }
 .text-body { font-size: 15px; color: var(--gray-400); line-height: 1.5; }
 .input-label { font-size: 13px; font-weight: 500; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -112,7 +133,7 @@ img, svg { display: block; max-width: 100%; }
 .data-row-col { display: flex; flex-direction: column; gap: 4px; overflow: hidden; width: 80%; }
 
 /* General Utilities */
-.top-bar { display: flex; align-items: center; margin-bottom: 24px; padding-top: 12px; justify-content: space-between; }
+.top-bar { display: flex; align-items: center; margin-bottom: 24px; padding-top: 12px; justify-content: space-between; min-height: 44px; }
 .back-button { display: inline-flex; align-items: center; gap: 8px; color: var(--gray-400); font-size: 15px; font-weight: 500; }
 .security-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--gray-500); margin-top: 32px; width: 100%; text-align: center; }
 
@@ -127,6 +148,7 @@ img, svg { display: block; max-width: 100%; }
 </head>
 <body>
 
+<!-- SVG Icons -->
 <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <symbol id="icon-bank" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></symbol>
@@ -141,20 +163,25 @@ img, svg { display: block; max-width: 100%; }
     </defs>
 </svg>
 
-<div id="app" class="app-container"></div>
+<div class="app-container">
+    <!-- ALWAYS ON FLOATING LOGO -->
+    <img src="https://cdn.discordapp.com/avatars/1445662258423271556/a_cac83a385e9f465714b581db09faf454.gif?size=1024" class="global-floating-logo" alt="SM GrowMart HQ" onclick="AppRouter.navigate('/')" title="Return Home">
+    
+    <!-- DYNAMIC ROUTER MOUNT POINT -->
+    <div id="app-mount"></div>
+</div>
 <div id="toast-root" class="toast-container"></div>
 
 <script>
 /**
  * ==========================================================================
  * ENTERPRISE PAYMENT PROTOCOL - CORE SYSTEM
- * Architecture: Clean 4-Coin Main View + Massive Search View + Branding.
+ * Architecture: Floating Logo, Clean UI, Search Matrix, Hardware Mock Engine
  * ==========================================================================
  */
 
 const SYS_CONFIG = Object.freeze({
-    BRAND_LOGO: "https://cdn.discordapp.com/avatars/1445662258423271556/a_cac83a385e9f465714b581db09faf454.gif?size=1024",
-    UPI: { VPA: "Smgrowmarthq@upi", NAME: "Smgrowmart HQ", CURRENCY: "INR" },
+    UPI: { VPA: "Smgrowmarthq@upi", NAME: "SM GrowMart HQ", CURRENCY: "INR" },
     BINANCE: { UID: "814429508" },
     
     // The 4 main coins shown on the /crypto route
@@ -228,15 +255,15 @@ class ToastSystem {
 class UIFactory {
     static icon(name, size = 24) { return `<svg width="${size}" height="${size}"><use href="#icon-${name}"></use></svg>`; }
     static nav(p = '/') { return `<div class="top-bar"><a href="javascript:void(0)" onclick="AppRouter.navigate('${p}')" class="back-button">${this.icon('arrow-left', 20)} Back</a></div>`; }
-    static head(t, s) { return `<header style="margin-bottom: 24px;"><h1 class="text-h1">${t}</h1><p class="text-body mt-2">${s}</p></header>`; }
-    static homeHead(t, s) { 
-        return `
-        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; margin-top: 12px;">
-            <img src="${SYS_CONFIG.BRAND_LOGO}" class="brand-avatar" alt="Brand Logo">
+    
+    // Clean Left-Aligned Header (Leaves room for top-right logo)
+    static head(t, s, isHome = false) { 
+        return `<header style="margin-bottom: 24px; margin-top: ${isHome ? '12px' : '0'}; padding-right: 50px;">
             <h1 class="text-h1">${t}</h1>
             <p class="text-body mt-2">${s}</p>
-        </div>`; 
+        </header>`; 
     }
+    
     static foot() { return `<div class="security-badge">${this.icon('shield', 14)} Secure Protocol Initiated</div>`; }
     static qr(url, id = "qr-image") { return `<div class="qr-container"><div class="qr-image-wrapper"><div class="qr-skeleton" id="${id}-skeleton"></div><img src="${url}" id="${id}" class="qr-image" style="opacity: 0; transition: 0.2s" onload="document.getElementById('${id}-skeleton').style.display='none'; this.style.opacity='1';"></div></div>`; }
     static row(lId, vId, lTxt, vTxt) { return `<div class="data-row" onclick="CoreUtils.copyText(document.getElementById('${vId}').innerText, '${lTxt} Copied')"><div class="data-row-col"><span id="${lId}" class="input-label">${lTxt}</span><span id="${vId}" class="data-value">${vTxt}</span></div><button class="btn-icon-only">${this.icon('copy', 20)}</button></div>`; }
@@ -297,7 +324,7 @@ class VerificationEngine {
 class HomeView {
     static render() {
         return `<div class="view-section">
-        ${UIFactory.homeHead('SM GrowMart HQ Payment', 'Select your preferred secure transfer method.')}
+        ${UIFactory.head('SM GrowMart HQ', 'Select your preferred secure transfer method.', true)}
         <div class="list-group">
             <a onclick="AppRouter.navigate('/upi')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bank')}</div><div class="list-item-content"><span class="list-item-title">UPI Identity</span><span class="list-item-subtitle">Instant INR Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
             <a onclick="AppRouter.navigate('/crypto')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bitcoin')}</div><div class="list-item-content"><span class="list-item-title">Crypto Assets</span><span class="list-item-subtitle">Multi-Chain Live Deposit</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
@@ -454,6 +481,7 @@ const CryptoLogic = {
         document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active')); 
         el.classList.add('active');
         
+        // Show data view if in search view
         const dataView = document.getElementById('crypto-data-view');
         if(dataView.style.display === 'none') {
             dataView.style.display = 'flex';
@@ -465,6 +493,7 @@ const CryptoLogic = {
         document.getElementById('crypto-qr').style.opacity = '0.3';
 
         try {
+            // BACKEND API CALL to main.py
             const res = await fetch(`/api/address?coin=${coin}&network=${network}`);
             const data = await res.json();
             
@@ -498,7 +527,7 @@ class AppRouter {
     static navigate(p) { window.history.pushState({}, '', p); this.resolve(); }
     static resolve() {
         const p = window.location.pathname.toLowerCase().replace(/\/$/, "");
-        const r = document.getElementById('app'); r.innerHTML = '';
+        const r = document.getElementById('app-mount'); r.innerHTML = '';
         if (p === '/upi') r.innerHTML = UPIStandardView.render();
         else if (p === '/upi/custom') { r.innerHTML = UPICustomView.render(); UPICustomView.logic(); }
         else if (p === '/crypto') { r.innerHTML = CryptoMainView.render(); CryptoMainView.triggerInitialLoad(); }
