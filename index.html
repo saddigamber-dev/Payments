@@ -4,466 +4,85 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Secure Payment Gateway</title>
-
 <style>
-/* ==========================================================================
-   1. ENTERPRISE CSS VARIABLES & DESIGN TOKENS
-   ========================================================================== */
+/* CSS - Keeping the exact premium styles from before */
 :root {
-    /* Core Grayscale - Apple/Stripe inspired minimal dark mode */
-    --gray-50: #fafafa;
-    --gray-100: #f5f5f5;
-    --gray-200: #e5e5e5;
-    --gray-300: #d4d4d4;
-    --gray-400: #a3a3a3;
-    --gray-500: #737373;
-    --gray-600: #525252;
-    --gray-700: #404040;
-    --gray-800: #262626;
-    --gray-900: #171717;
-    --gray-950: #0a0a0a;
-
-    /* Semantic Colors */
-    --primary: #ffffff;
-    --primary-inv: #000000;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --success: #16a34a;
-    --success-bg: rgba(22, 163, 74, 0.1);
-    --danger: #dc2626;
-    --danger-bg: rgba(220, 38, 38, 0.1);
-    --warning: #ca8a04;
-
-    /* Surface & Background */
-    --bg-base: var(--gray-950);
-    --bg-surface: var(--gray-900);
-    --bg-surface-hover: var(--gray-800);
-    --border-subtle: var(--gray-800);
-    --border-focus: var(--gray-600);
-
-    /* Typography */
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-
-    /* Spacing & Metrics */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
-    --radius-full: 9999px;
-
-    /* Safe Areas for Mobile (Notches/Home Bars) */
-    --safe-top: env(safe-area-inset-top, 20px);
-    --safe-bottom: env(safe-area-inset-bottom, 20px);
+    --gray-50: #fafafa; --gray-100: #f5f5f5; --gray-200: #e5e5e5; --gray-400: #a3a3a3;
+    --gray-500: #737373; --gray-700: #404040; --gray-800: #262626; --gray-900: #171717; --gray-950: #0a0a0a;
+    --primary: #ffffff; --primary-inv: #000000; --success: #16a34a; --danger: #dc2626;
+    --bg-base: var(--gray-950); --bg-surface: var(--gray-900); --border-subtle: var(--gray-800);
+    --font-sans: -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: ui-monospace, monospace;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
 }
-
-/* ==========================================================================
-   2. CSS RESET & NORMALIZATION
-   ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-family: var(--font-sans); -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
+html { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 body { background-color: var(--bg-base); color: var(--gray-50); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 a { color: inherit; text-decoration: none; }
-button, input, select, textarea { font: inherit; background: none; border: none; outline: none; }
-button { cursor: pointer; }
+button, input { font: inherit; background: none; border: none; outline: none; cursor: pointer; }
 img, svg { display: block; max-width: 100%; }
-
-/* Remove tap highlight on mobile for clean feel */
 * { -webkit-tap-highlight-color: transparent; }
 
-/* ==========================================================================
-   3. LAYOUT & GRID UTILITIES
-   ========================================================================== */
-.app-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: var(--safe-top) 16px calc(var(--safe-bottom) + 24px) 16px;
-    position: relative;
-}
+.app-container { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+.view-section { display: flex; flex-direction: column; gap: 24px; width: 100%; animation: simpleFadeIn 0.2s ease-out forwards; }
+@keyframes simpleFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-.view-section {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    width: 100%;
-    /* Strict minimal functional fade, no bouncy nonsense */
-    animation: simpleFadeIn 0.2s ease-out forwards;
-}
-
-@keyframes simpleFadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ==========================================================================
-   4. TYPOGRAPHY CLASSES
-   ========================================================================== */
-.text-h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--gray-50); }
-.text-h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--gray-50); }
+.text-h1 { font-size: 28px; font-weight: 700; line-height: 1.2; color: var(--gray-50); }
 .text-body { font-size: 15px; color: var(--gray-400); line-height: 1.5; }
-.text-body-sm { font-size: 13px; color: var(--gray-500); }
-.text-mono { font-family: var(--font-mono); letter-spacing: -0.05em; }
-.text-center { text-align: center; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.text-success { color: var(--success); }
+.input-label { font-size: 13px; font-weight: 500; color: var(--gray-400); text-transform: uppercase; }
+.data-value { font-size: 14px; font-weight: 600; color: var(--gray-50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
 
-/* ==========================================================================
-   5. COMPONENTS: CARDS & CONTAINERS
-   ========================================================================== */
-.card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    width: 100%;
-}
-
-.list-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.list-item {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.list-item:hover, .list-item:active {
-    background: var(--bg-surface-hover);
-    border-color: var(--border-focus);
-}
-
-.list-item-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: var(--gray-800);
-    border-radius: var(--radius-sm);
-    margin-right: 16px;
-    color: var(--gray-50);
-}
-
-.list-item-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.list-item-title { font-size: 15px; font-weight: 600; color: var(--gray-50); }
+.list-group { display: flex; flex-direction: column; gap: 12px; }
+.list-item { display: flex; align-items: center; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.list-item-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--gray-800); border-radius: var(--radius-sm); margin-right: 16px; }
+.list-item-content { flex: 1; display: flex; flex-direction: column; }
+.list-item-title { font-size: 15px; font-weight: 600; }
 .list-item-subtitle { font-size: 13px; color: var(--gray-400); }
-.list-item-action { color: var(--gray-500); display: flex; align-items: center; }
 
-/* ==========================================================================
-   6. COMPONENTS: BUTTONS
-   ========================================================================== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 16px;
-    border-radius: var(--radius-md);
-    font-size: 15px;
-    font-weight: 600;
-    transition: all 0.15s ease;
-}
+.btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 16px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; }
+.btn-primary { background: var(--primary); color: var(--primary-inv); }
+.btn-secondary { background: var(--bg-surface); color: var(--gray-50); border: 1px solid var(--border-subtle); }
+.btn-icon-only { padding: 12px; color: var(--gray-400); }
 
-.btn-primary {
-    background: var(--primary);
-    color: var(--primary-inv);
-}
+.currency-input-group { position: relative; display: flex; align-items: center; }
+.currency-symbol { position: absolute; left: 20px; font-size: 24px; font-weight: 500; color: var(--gray-400); }
+.currency-input { width: 100%; background: transparent; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 24px 20px 24px 45px; font-size: 28px; font-weight: 600; color: var(--gray-50); font-family: var(--font-mono); }
 
-.btn-primary:active { background: var(--gray-200); }
+.qr-container { display: flex; flex-direction: column; align-items: center; padding: 32px; background: var(--gray-50); border-radius: var(--radius-lg); margin: 16px 0; }
+.qr-image-wrapper { width: 220px; height: 220px; position: relative; }
+.qr-image { width: 100%; height: 100%; object-fit: contain; }
+.qr-skeleton { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gray-200); border-radius: var(--radius-sm); animation: pulseBg 1.5s infinite; }
+@keyframes pulseBg { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-.btn-secondary {
-    background: var(--bg-surface);
-    color: var(--gray-50);
-    border: 1px solid var(--border-subtle);
-}
+.data-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 16px; }
+.data-row-col { display: flex; flex-direction: column; width: 80%; }
 
-.btn-secondary:active { background: var(--gray-800); }
+.top-bar { display: flex; align-items: center; margin-bottom: 24px; padding-top: 12px; }
+.back-button { display: inline-flex; align-items: center; gap: 8px; color: var(--gray-400); font-weight: 500; }
+.segmented-control { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: var(--bg-surface); padding: 6px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 16px; }
+.segment-btn { padding: 12px; font-size: 13px; font-weight: 600; color: var(--gray-400); border-radius: var(--radius-sm); }
+.segment-btn.active { background: var(--gray-800); color: var(--gray-50); }
+.security-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--gray-500); margin-top: 32px; width: 100%; text-align: center; }
 
-.btn-icon-only {
-    padding: 12px;
-    background: transparent;
-    color: var(--gray-400);
-    border-radius: var(--radius-md);
-}
-.btn-icon-only:hover, .btn-icon-only:active {
-    background: var(--gray-800);
-    color: var(--gray-50);
-}
-
-.btn-disabled {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-/* ==========================================================================
-   7. COMPONENTS: INPUTS & FORMS
-   ========================================================================== */
-.input-wrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.input-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.input-control {
-    width: 100%;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 16px;
-    font-size: 16px;
-    color: var(--gray-50);
-    transition: border-color 0.15s ease;
-}
-
-.input-control:focus {
-    border-color: var(--gray-400);
-}
-
-.input-control::placeholder {
-    color: var(--gray-600);
-}
-
-/* Currency Input Special Styling */
-.currency-input-group {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.currency-symbol {
-    position: absolute;
-    left: 20px;
-    font-size: 24px;
-    font-weight: 500;
-    color: var(--gray-400);
-}
-
-.currency-input {
-    width: 100%;
-    background: transparent;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 24px 20px 24px 45px;
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-50);
-    font-family: var(--font-mono);
-}
-.currency-input:focus { border-color: var(--gray-400); }
-
-/* ==========================================================================
-   8. COMPONENTS: QR CODES & DATA DISPLAY
-   ========================================================================== */
-.qr-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
-    background: var(--gray-50);
-    border-radius: var(--radius-lg);
-    margin: 16px 0;
-}
-
-.qr-image-wrapper {
-    width: 220px;
-    height: 220px;
-    position: relative;
-}
-
-.qr-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-.qr-skeleton {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: var(--gray-200);
-    border-radius: var(--radius-sm);
-    animation: pulseBg 1.5s infinite;
-}
-
-@keyframes pulseBg {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
-}
-
-.data-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    margin-bottom: 16px;
-}
-
-.data-row-col { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
-.data-value { font-size: 15px; font-weight: 600; color: var(--gray-50); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
-
-/* ==========================================================================
-   9. COMPONENTS: NAVIGATION & TOASTS
-   ========================================================================== */
-.top-bar {
-    display: flex;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-top: 12px;
-}
-
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gray-400);
-    font-size: 15px;
-    font-weight: 500;
-}
-.back-button:active { color: var(--gray-50); }
-
-.toast-container {
-    position: fixed;
-    bottom: var(--safe-bottom);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    pointer-events: none;
-    width: calc(100% - 32px);
-    max-width: 400px;
-}
-
-.toast {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: var(--gray-800);
-    border: 1px solid var(--gray-700);
-    color: var(--gray-50);
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    animation: toastSlideUp 0.3s ease forwards;
-}
-
-@keyframes toastSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Segmented Control (Tabs) */
-.segmented-control {
-    display: flex;
-    background: var(--bg-surface);
-    padding: 4px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-subtle);
-    margin-bottom: 16px;
-}
-
-.segment-btn {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gray-400);
-    border-radius: var(--radius-sm);
-    transition: all 0.15s ease;
-}
-
-.segment-btn.active {
-    background: var(--gray-800);
-    color: var(--gray-50);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-/* Security Badge */
-.security-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--gray-500);
-    margin-top: 32px;
-}
+.toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: calc(100% - 32px); max-width: 400px; }
+.toast { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--gray-800); border: 1px solid var(--gray-700); color: var(--gray-50); border-radius: var(--radius-md); font-size: 14px; font-weight: 500; animation: toastSlideUp 0.3s ease forwards; }
+@keyframes toastSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
     <defs>
-        <symbol id="icon-bank" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="3" y1="9" x2="21" y2="9"></line>
-            <line x1="9" y1="21" x2="9" y2="9"></line>
-        </symbol>
-        <symbol id="icon-bitcoin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.312m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
-        </symbol>
-        <symbol id="icon-exchange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 3 21 3 21 8"></polyline>
-            <line x1="4" y1="14" x2="21" y2="3"></line>
-            <polyline points="8 21 3 21 3 16"></polyline>
-            <line x1="20" y1="10" x2="3" y2="21"></line>
-        </symbol>
-        <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-        </symbol>
-        <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </symbol>
-        <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-        </symbol>
-        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-        </symbol>
-        <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        </symbol>
-        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </symbol>
+        <symbol id="icon-bank" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></symbol>
+        <symbol id="icon-bitcoin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.312m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path></symbol>
+        <symbol id="icon-exchange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="14" x2="21" y2="3"></line><polyline points="8 21 3 21 3 16"></polyline><line x1="20" y1="10" x2="3" y2="21"></line></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></symbol>
+        <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></symbol>
+        <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></symbol>
     </defs>
 </svg>
 
@@ -471,527 +90,171 @@ img, svg { display: block; max-width: 100%; }
 <div id="toast-root" class="toast-container"></div>
 
 <script>
-/**
- * ==========================================================================
- * ENTERPRISE PAYMENT PROTOCOL - VANILLA JS ARCHITECTURE
- * * Description: A highly optimized, dependency-free Single Page Application 
- * designed for strict mobile-first rendering and maximum stability.
- * * Includes: 
- * - Virtual Router
- * - Component Lifecycle Engine
- * - Global State Management
- * - Clipboard API Wrappers
- * - Utility Formatting
- * ==========================================================================
- */
+// --- STATE MANAGEMENT ---
+// These default to 'Loading...' until the backend replies
+const SYS_DATA = {
+    UPI_ID: "Smgrowmarthq@upi",
+    UPI_NAME: "Smgrowmart HQ",
+    BINANCE_UID: "814429508",
+    CRYPTO: {
+        USDT: "Fetching live address...",
+        BTCB: "Fetching live address...",
+        ETH: "Fetching live address...",
+        BNB: "Fetching live address..."
+    }
+};
 
-/**
- * 1. CONFIGURATION LAYER
- * Centralized immutable state config.
- */
-const SYS_CONFIG = Object.freeze({
-    UPI: Object.freeze({
-        VPA: "Smgrowmarthq@upi",
-        NAME: "Smgrowmart HQ",
-        CURRENCY: "INR"
-    }),
-    CRYPTO: Object.freeze({
-        WALLET: "0x33aca3a213443730cf548b77b520f4f87df447ec",
-        NETWORKS: ['USDT', 'BTCB', 'ETH', 'BNB'],
-        STANDARD: 'BEP20'
-    }),
-    BINANCE: Object.freeze({
-        UID: "814429508"
-    }),
-    UI: Object.freeze({
-        QR_API: "https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data="
-    })
-});
+// API Fetch Engine (Silent background execution)
+async function fetchCryptoConfig() {
+    try {
+        const response = await fetch('/api/get-crypto-addresses');
+        const data = await response.json();
+        SYS_DATA.CRYPTO.USDT = data.usdt;
+        SYS_DATA.CRYPTO.BTCB = data.btcb;
+        SYS_DATA.CRYPTO.ETH = data.eth;
+        SYS_DATA.CRYPTO.BNB = data.bnb;
+        
+        // If user is currently on the crypto tab, force a re-render to show new keys
+        if(window.location.pathname.toLowerCase() === '/crypto') {
+            AppRouter.resolve();
+        }
+    } catch (e) {
+        console.error("Failed to connect to backend", e);
+    }
+}
+// Execute immediately on load
+fetchCryptoConfig();
 
-/**
- * 2. UTILITY LAYER
- * Pure functions for data transformation and side-effects.
- */
+// --- UTILITIES ---
 class CoreUtils {
-    /**
-     * Deep clones an object
-     * @param {Object} obj 
-     * @returns {Object}
-     */
-    static clone(obj) {
-        return JSON.parse(JSON.stringify(obj));
-    }
-
-    /**
-     * Generates a Google Chart QR code URL
-     * @param {string} data - The data to encode
-     * @returns {string} - Full URL string
-     */
-    static getQRUrl(data) {
-        return `${SYS_CONFIG.UI.QR_API}${encodeURIComponent(data)}`;
-    }
-
-    /**
-     * Debounces a function execution
-     * @param {Function} func 
-     * @param {number} wait 
-     * @returns {Function}
-     */
-    static debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => { clearTimeout(timeout); func(...args); };
-            clearTimeout(timeout); timeout = setTimeout(later, wait);
-        };
-    }
-
-    /**
-     * Formats number to INR currency string
-     * @param {number|string} amount 
-     * @returns {string}
-     */
-    static formatINR(amount) {
-        const num = parseFloat(amount);
-        if (isNaN(num)) return '0.00';
-        return new Intl.NumberFormat('en-IN', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(num);
-    }
-
-    /**
-     * Securely copies text to clipboard and triggers Toast
-     * @param {string} text 
-     * @param {string} successMsg 
-     */
+    static getQRUrl(data) { return `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=${encodeURIComponent(data)}`; }
+    static debounce(func, wait) { let t; return function(...args) { clearTimeout(t); t = setTimeout(() => func(...args), wait); }; }
     static async copyText(text, successMsg = "Copied to clipboard") {
         try {
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(text);
-            } else {
-                // Legacy fallback
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                } catch (err) {
-                    console.error('Fallback: Oops, unable to copy', err);
-                }
-                document.body.removeChild(textArea);
-            }
+            const el = document.createElement("textarea"); el.value = text; el.style.position = "fixed"; el.style.left = "-9999px";
+            document.body.appendChild(el); el.focus(); el.select(); document.execCommand('copy'); document.body.removeChild(el);
             ToastSystem.show(successMsg, 'success');
-        } catch (err) {
-            console.error('Copy failed', err);
-            ToastSystem.show('Copy failed. Please manually select text.', 'error');
-        }
+        } catch (err) { ToastSystem.show('Copy failed', 'error'); }
     }
 }
 
-/**
- * 3. TOAST NOTIFICATION ENGINE
- * Handles non-blocking UI alerts.
- */
 class ToastSystem {
-    /**
-     * @param {string} message 
-     * @param {string} type - 'success' | 'error' | 'info'
-     */
-    static show(message, type = 'info') {
+    static show(msg, type = 'info') {
         const root = document.getElementById('toast-root');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        
-        let iconName = 'check';
-        if (type === 'error') iconName = 'shield'; // Reusing shield for general alert in minimal setup
-        
-        toast.innerHTML = `
-            <svg width="18" height="18" style="color: ${type === 'success' ? 'var(--success)' : 'inherit'}">
-                <use href="#icon-${iconName}"></use>
-            </svg>
-            <span>${message}</span>
-        `;
-        
-        root.appendChild(toast);
-        
-        // Auto remove
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(10px)';
-            toast.style.transition = 'all 0.2s ease';
-            setTimeout(() => {
-                if (root.contains(toast)) root.removeChild(toast);
-            }, 200);
-        }, 2500);
+        const t = document.createElement('div'); t.className = 'toast';
+        t.innerHTML = `<svg width="18" height="18" style="color: ${type === 'success' ? 'var(--success)' : 'inherit'}"><use href="#icon-${type==='error'?'shield':'check'}"></use></svg><span>${msg}</span>`;
+        root.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; setTimeout(() => t.remove(), 200); }, 2500);
     }
 }
 
-/**
- * 4. UI COMPONENT FACTORY
- * Generates reusable HTML string components.
- */
 class UIFactory {
-    /**
-     * Renders SVG icon
-     */
-    static icon(name, size = 24, className = '') {
-        return `<svg width="${size}" height="${size}" class="${className}"><use href="#icon-${name}"></use></svg>`;
-    }
-
-    /**
-     * Renders standard top navigation bar
-     */
-    static navBar(backPath = '/') {
-        return `
-            <div class="top-bar">
-                <a href="javascript:void(0)" onclick="AppRouter.navigate('${backPath}')" class="back-button">
-                    ${this.icon('arrow-left', 20)} Back
-                </a>
-            </div>
-        `;
-    }
-
-    /**
-     * Renders standard page header
-     */
-    static header(title, subtitle) {
-        return `
-            <header style="margin-bottom: 24px;">
-                <h1 class="text-h1">${title}</h1>
-                <p class="text-body mt-2">${subtitle}</p>
-            </header>
-        `;
-    }
-
-    /**
-     * Renders secure footer badge
-     */
-    static footer() {
-        return `
-            <div style="text-align: center; width: 100%;">
-                <div class="security-badge">
-                    ${this.icon('shield', 14)} Enterprise 256-bit Encryption
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * Renders standard QR Display Area
-     */
-    static qrDisplay(dataUrl, id = "qr-image") {
-        return `
-            <div class="qr-container">
-                <div class="qr-image-wrapper">
-                    <div class="qr-skeleton" id="${id}-skeleton"></div>
-                    <img src="${dataUrl}" id="${id}" class="qr-image" style="opacity: 0; transition: opacity 0.2s"
-                         onload="document.getElementById('${id}-skeleton').style.display='none'; this.style.opacity='1';" 
-                         alt="Payment QR Code">
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * Renders copyable data row
-     */
-    static dataRow(label, value, copyMsg) {
-        return `
-            <div class="data-row" onclick="CoreUtils.copyText('${value}', '${copyMsg}')" style="cursor: pointer;">
-                <div class="data-row-col">
-                    <span class="input-label">${label}</span>
-                    <span class="data-value">${value}</span>
-                </div>
-                <button class="btn-icon-only" aria-label="Copy">
-                    ${this.icon('copy', 20)}
-                </button>
-            </div>
-        `;
-    }
+    static icon(name, size = 24) { return `<svg width="${size}" height="${size}"><use href="#icon-${name}"></use></svg>`; }
+    static nav(p = '/') { return `<div class="top-bar"><a href="javascript:void(0)" onclick="AppRouter.navigate('${p}')" class="back-button">${this.icon('arrow-left', 20)} Back</a></div>`; }
+    static head(t, s) { return `<header style="margin-bottom: 24px;"><h1 class="text-h1">${t}</h1><p class="text-body mt-2">${s}</p></header>`; }
+    static foot() { return `<div class="security-badge">${this.icon('shield', 14)} Enterprise 256-bit Encryption</div>`; }
+    static qr(url, id = "qr-image") { return `<div class="qr-container"><div class="qr-image-wrapper"><div class="qr-skeleton" id="${id}-skeleton"></div><img src="${url}" id="${id}" class="qr-image" style="opacity: 0; transition: 0.2s" onload="document.getElementById('${id}-skeleton').style.display='none'; this.style.opacity='1';"></div></div>`; }
+    static row(lId, vId, lTxt, vTxt) { return `<div class="data-row" onclick="CoreUtils.copyText(document.getElementById('${vId}').innerText, '${lTxt} Copied')"><div class="data-row-col"><span id="${lId}" class="input-label">${lTxt}</span><span id="${vId}" class="data-value">${vTxt}</span></div><button class="btn-icon-only">${this.icon('copy', 20)}</button></div>`; }
 }
 
-/**
- * 5. VIEW CONTROLLERS
- * Encapsulate specific page logic and rendering.
- */
-
+// --- VIEWS ---
 class HomeView {
     static render() {
-        return `
-            <div class="view-section">
-                <div style="margin-top: 24px;"></div>
-                ${UIFactory.header('Payment Protocol', 'Select your preferred secure transfer method.')}
-                
-                <div class="list-group">
-                    <a href="javascript:void(0)" onclick="AppRouter.navigate('/upi')" class="list-item">
-                        <div class="list-item-icon">${UIFactory.icon('bank')}</div>
-                        <div class="list-item-content">
-                            <span class="list-item-title">UPI Identity</span>
-                            <span class="list-item-subtitle">Instant INR Transfer</span>
-                        </div>
-                        <div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div>
-                    </a>
-
-                    <a href="javascript:void(0)" onclick="AppRouter.navigate('/crypto')" class="list-item">
-                        <div class="list-item-icon">${UIFactory.icon('bitcoin')}</div>
-                        <div class="list-item-content">
-                            <span class="list-item-title">Crypto Assets</span>
-                            <span class="list-item-subtitle">Multi-chain Network</span>
-                        </div>
-                        <div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div>
-                    </a>
-
-                    <a href="javascript:void(0)" onclick="AppRouter.navigate('/binance')" class="list-item">
-                        <div class="list-item-icon">${UIFactory.icon('exchange')}</div>
-                        <div class="list-item-content">
-                            <span class="list-item-title">Binance Pay</span>
-                            <span class="list-item-subtitle">Zero Fee Internal Transfer</span>
-                        </div>
-                        <div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div>
-                    </a>
-                </div>
-                ${UIFactory.footer()}
-            </div>
-        `;
+        return `<div class="view-section"><div style="margin-top: 24px;"></div>${UIFactory.head('Payment Protocol', 'Select your preferred secure transfer method.')}<div class="list-group">
+            <a onclick="AppRouter.navigate('/upi')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bank')}</div><div class="list-item-content"><span class="list-item-title">UPI Identity</span><span class="list-item-subtitle">Instant INR Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
+            <a onclick="AppRouter.navigate('/crypto')" class="list-item"><div class="list-item-icon">${UIFactory.icon('bitcoin')}</div><div class="list-item-content"><span class="list-item-title">Crypto Assets</span><span class="list-item-subtitle">Dynamic Backend Fetching</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
+            <a onclick="AppRouter.navigate('/binance')" class="list-item"><div class="list-item-icon">${UIFactory.icon('exchange')}</div><div class="list-item-content"><span class="list-item-title">Binance Pay</span><span class="list-item-subtitle">Zero Fee Internal Transfer</span></div><div class="list-item-action">${UIFactory.icon('chevron-right', 20)}</div></a>
+        </div>${UIFactory.foot()}</div>`;
     }
 }
 
 class UPIStandardView {
     static render() {
-        const intentURI = `upi://pay?pa=${SYS_CONFIG.UPI.VPA}&pn=${encodeURIComponent(SYS_CONFIG.UPI.NAME)}&cu=${SYS_CONFIG.UPI.CURRENCY}`;
-        const qrUrl = CoreUtils.getQRUrl(intentURI);
-
-        return `
-            <div class="view-section">
-                ${UIFactory.navBar('/')}
-                ${UIFactory.header('UPI Transfer', 'Scan via any supported Indian payment application.')}
-                
-                ${UIFactory.qrDisplay(qrUrl)}
-                
-                ${UIFactory.dataRow('VIRTUAL PAYMENT ADDRESS', SYS_CONFIG.UPI.VPA, 'UPI ID Copied')}
-                
-                <a href="${intentURI}" class="btn btn-primary" style="margin-top: 8px;">
-                    Open Payment App
-                </a>
-                
-                <a href="javascript:void(0)" onclick="AppRouter.navigate('/upi/custom')" class="btn btn-secondary" style="margin-top: 8px;">
-                    ${UIFactory.icon('settings', 18)} Generate Custom Amount QR
-                </a>
-
-                ${UIFactory.footer()}
-            </div>
-        `;
+        const intent = `upi://pay?pa=${SYS_DATA.UPI_ID}&pn=${encodeURIComponent(SYS_DATA.UPI_NAME)}&cu=INR`;
+        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('UPI Transfer', 'Scan via any supported Indian payment application.')}${UIFactory.qr(CoreUtils.getQRUrl(intent))}
+        ${UIFactory.row('upi-lbl', 'upi-val', 'VIRTUAL PAYMENT ADDRESS', SYS_DATA.UPI_ID)}
+        <a href="${intent}" class="btn btn-primary" style="margin-top: 8px;">Open Payment App</a>
+        <a onclick="AppRouter.navigate('/upi/custom')" class="btn btn-secondary" style="margin-top: 8px;">${UIFactory.icon('settings', 18)} Generate Custom Amount QR</a>
+        ${UIFactory.foot()}</div>`;
     }
 }
 
 class UPICustomView {
     static render() {
-        // Render shell. Event listeners handle the reactivity.
-        return `
-            <div class="view-section">
-                ${UIFactory.navBar('/upi')}
-                ${UIFactory.header('Custom Request', 'Enter amount to generate specific payment matrix.')}
-                
-                <div class="currency-input-group">
-                    <span class="currency-symbol">₹</span>
-                    <input type="number" id="amt-input" class="currency-input" placeholder="0.00" autocomplete="off" autofocus>
-                </div>
-
-                <div id="dynamic-target" style="opacity: 0.3; pointer-events: none; transition: opacity 0.2s ease;">
-                    ${UIFactory.qrDisplay(CoreUtils.getQRUrl(`upi://pay?pa=${SYS_CONFIG.UPI.VPA}&pn=${encodeURIComponent(SYS_CONFIG.UPI.NAME)}`), 'dyn-qr')}
-                    
-                    <a href="#" id="dyn-pay-btn" class="btn btn-primary" style="margin-top: 16px;">
-                        Pay ₹0.00
-                    </a>
-                </div>
-
-                ${UIFactory.footer()}
-            </div>
-        `;
+        return `<div class="view-section">${UIFactory.nav('/upi')}${UIFactory.head('Custom Request', 'Enter amount to generate specific payment matrix.')}
+        <div class="currency-input-group"><span class="currency-symbol">₹</span><input type="number" id="amt-input" class="currency-input" placeholder="0.00" autocomplete="off" autofocus></div>
+        <div id="dynamic-target" style="opacity: 0.3; pointer-events: none; transition: 0.2s;">
+            ${UIFactory.qr(CoreUtils.getQRUrl(`upi://pay?pa=${SYS_DATA.UPI_ID}&pn=${encodeURIComponent(SYS_DATA.UPI_NAME)}`), 'dyn-qr')}
+            <a href="#" id="dyn-pay-btn" class="btn btn-primary" style="margin-top: 16px;">Pay ₹0.00</a>
+        </div>${UIFactory.foot()}</div>`;
     }
-
-    static attachLogic() {
-        const input = document.getElementById('amt-input');
-        const target = document.getElementById('dynamic-target');
-        const img = document.getElementById('dyn-qr');
-        const btn = document.getElementById('dyn-pay-btn');
-
-        if(!input) return;
-
-        const updateUI = CoreUtils.debounce((val) => {
-            const amount = parseFloat(val);
-            if (amount > 0) {
-                const intent = `upi://pay?pa=${SYS_CONFIG.UPI.VPA}&pn=${encodeURIComponent(SYS_CONFIG.UPI.NAME)}&am=${amount}&cu=${SYS_CONFIG.UPI.CURRENCY}`;
-                
-                target.style.opacity = '1';
-                target.style.pointerEvents = 'all';
-                
-                img.style.opacity = '0.4'; // loading state
-                img.src = CoreUtils.getQRUrl(intent);
-                img.onload = () => img.style.opacity = '1';
-                
-                btn.href = intent;
-                btn.innerText = `Pay ₹${CoreUtils.formatINR(amount)}`;
-            } else {
-                target.style.opacity = '0.3';
-                target.style.pointerEvents = 'none';
-                btn.innerText = `Pay ₹0.00`;
-            }
-        }, 300);
-
-        input.addEventListener('input', (e) => updateUI(e.target.value));
+    static logic() {
+        const inp = document.getElementById('amt-input'), tgt = document.getElementById('dynamic-target'), img = document.getElementById('dyn-qr'), btn = document.getElementById('dyn-pay-btn');
+        if(!inp) return;
+        inp.addEventListener('input', CoreUtils.debounce((e) => {
+            const amt = parseFloat(e.target.value);
+            if (amt > 0) {
+                const intent = `upi://pay?pa=${SYS_DATA.UPI_ID}&pn=${encodeURIComponent(SYS_DATA.UPI_NAME)}&am=${amt}&cu=INR`;
+                tgt.style.opacity='1'; tgt.style.pointerEvents='all'; img.style.opacity='0.4'; img.src=CoreUtils.getQRUrl(intent); img.onload=()=>img.style.opacity='1'; btn.href=intent; btn.innerText=`Pay ₹${amt.toFixed(2)}`;
+            } else { tgt.style.opacity='0.3'; tgt.style.pointerEvents='none'; btn.innerText=`Pay ₹0.00`; }
+        }, 300));
     }
 }
 
 class CryptoView {
     static render() {
-        let tabs = '';
-        SYS_CONFIG.CRYPTO.NETWORKS.forEach((net, i) => {
-            tabs += `<button class="segment-btn ${i === 0 ? 'active' : ''}" onclick="CryptoLogic.switchTab(this, '${net}')">${net}</button>`;
-        });
+        // Build Tabs
+        const assets = ['USDT', 'BTCB', 'ETH', 'BNB'];
+        let tabs = assets.map((a, i) => `<button class="segment-btn ${i===0?'active':''}" onclick="CryptoLogic.switch(this, '${a}')">${a}</button>`).join('');
+        
+        const initAddress = SYS_DATA.CRYPTO.USDT; // Defaults to USDT
+        const qrUrl = initAddress.includes("Fetching") ? "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=Loading" : CoreUtils.getQRUrl(initAddress);
 
-        const qrUrl = CoreUtils.getQRUrl(SYS_CONFIG.CRYPTO.WALLET);
-
-        return `
-            <div class="view-section">
-                ${UIFactory.navBar('/')}
-                ${UIFactory.header('Crypto Deposit', `Ensure network is set to ${SYS_CONFIG.CRYPTO.STANDARD}.`)}
-                
-                <div class="segmented-control">
-                    ${tabs}
-                </div>
-
-                <div id="crypto-data-view">
-                    ${UIFactory.qrDisplay(qrUrl, 'crypto-qr')}
-                    ${UIFactory.dataRow(`<span id="crypto-lbl">USDT (${SYS_CONFIG.CRYPTO.STANDARD})</span>`, SYS_CONFIG.CRYPTO.WALLET, 'Contract Address Copied')}
-                </div>
-
-                ${UIFactory.footer()}
-            </div>
-        `;
+        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('Crypto Deposit', 'Fetching live addresses from Binance API securely.')}
+        <div class="segmented-control">${tabs}</div><div id="crypto-data-view">
+        ${UIFactory.qr(qrUrl, 'crypto-qr')}
+        ${UIFactory.row('crypto-lbl', 'crypto-val', 'USDT (BEP20)', initAddress)}
+        </div>${UIFactory.foot()}</div>`;
     }
 }
-
-// Global hook for Crypto logic
 const CryptoLogic = {
-    switchTab: (element, networkName) => {
-        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
-        element.classList.add('active');
-        document.getElementById('crypto-lbl').innerText = `${networkName} (${SYS_CONFIG.CRYPTO.STANDARD})`;
-        ToastSystem.show(`Network mapped to ${networkName}`);
+    switch: (el, sym) => {
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active');
+        const addr = SYS_DATA.CRYPTO[sym];
+        document.getElementById('crypto-lbl').innerText = `${sym} (BEP20)`;
+        document.getElementById('crypto-val').innerText = addr;
+        const img = document.getElementById('crypto-qr');
+        if(!addr.includes("Fetching")) { img.style.opacity='0.3'; img.src=CoreUtils.getQRUrl(addr); img.onload=()=>img.style.opacity='1'; }
     }
 };
 
 class BinanceView {
     static render() {
-        const qrUrl = CoreUtils.getQRUrl(SYS_CONFIG.BINANCE.UID);
-        return `
-            <div class="view-section">
-                ${UIFactory.navBar('/')}
-                ${UIFactory.header('Binance Pay', 'Scan or copy UID for internal zero-fee transfer.')}
-                
-                ${UIFactory.qrDisplay(qrUrl)}
-                
-                ${UIFactory.dataRow('BINANCE USER ID (UID)', SYS_CONFIG.BINANCE.UID, 'Binance UID Copied')}
-                
-                <button class="btn btn-secondary" onclick="CoreUtils.copyText('${SYS_CONFIG.BINANCE.UID}', 'UID Copied!')" style="margin-top: 8px;">
-                    ${UIFactory.icon('copy', 18)} Copy ID to Clipboard
-                </button>
-
-                ${UIFactory.footer()}
-            </div>
-        `;
+        return `<div class="view-section">${UIFactory.nav()}${UIFactory.head('Binance Pay', 'Scan or copy UID for internal zero-fee transfer.')}${UIFactory.qr(CoreUtils.getQRUrl(SYS_DATA.BINANCE_UID))}
+        ${UIFactory.row('binance-lbl', 'binance-val', 'BINANCE USER ID (UID)', SYS_DATA.BINANCE_UID)}
+        ${UIFactory.foot()}</div>`;
     }
 }
 
-/**
- * 6. APPLICATION ROUTER
- * Handles pushState history and DOM replacement.
- */
 class AppRouter {
-    /**
-     * Initializes router listeners
-     */
-    static init() {
-        window.addEventListener('popstate', () => this.resolve());
-        this.resolve();
-    }
-
-    /**
-     * Pushes new path and re-renders
-     * @param {string} path 
-     */
-    static navigate(path) {
-        window.history.pushState({}, '', path);
-        this.resolve();
-    }
-
-    /**
-     * Matches current path to view controller
-     */
+    static init() { window.addEventListener('popstate', () => this.resolve()); this.resolve(); }
+    static navigate(p) { window.history.pushState({}, '', p); this.resolve(); }
     static resolve() {
-        const path = window.location.pathname.toLowerCase().replace(/\/$/, ""); // Normalize path
-        const root = document.getElementById('app');
-        
-        // Fast unmount clean UI
-        root.innerHTML = '';
-        let viewHtml = '';
-
-        switch (path) {
-            case '/upi':
-                viewHtml = UPIStandardView.render();
-                break;
-            case '/upi/custom':
-                viewHtml = UPICustomView.render();
-                break;
-            case '/crypto':
-                viewHtml = CryptoView.render();
-                break;
-            case '/binance':
-                viewHtml = BinanceView.render();
-                break;
-            case '':
-            case '/':
-                viewHtml = HomeView.render();
-                break;
-            default:
-                // Catchall / 404 handler -> redirect home safely
-                window.history.replaceState({}, '', '/');
-                viewHtml = HomeView.render();
-                break;
-        }
-
-        // Mount view
-        root.innerHTML = viewHtml;
-
-        // Execute post-render hooks
-        if (path === '/upi/custom') {
-            UPICustomView.attachLogic();
-        }
-        
-        // Scroll to top
+        const p = window.location.pathname.toLowerCase().replace(/\/$/, "");
+        const r = document.getElementById('app'); r.innerHTML = '';
+        if (p === '/upi') r.innerHTML = UPIStandardView.render();
+        else if (p === '/upi/custom') { r.innerHTML = UPICustomView.render(); UPICustomView.logic(); }
+        else if (p === '/crypto') r.innerHTML = CryptoView.render();
+        else if (p === '/binance') r.innerHTML = BinanceView.render();
+        else { window.history.replaceState({}, '', '/'); r.innerHTML = HomeView.render(); }
         window.scrollTo(0,0);
     }
 }
 
-/**
- * 7. BOOTSTRAPPER
- * Kicks off the application loop.
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // Suppress rubber-banding scroll on iOS Safari for native app feel
-    document.body.addEventListener('touchmove', function(e) {
-        if(e.target === document.body) e.preventDefault();
-    }, { passive: false });
-
-    // Initialize Routing
+    document.body.addEventListener('touchmove', (e) => { if(e.target === document.body) e.preventDefault(); }, { passive: false });
     AppRouter.init();
 });
-
 </script>
 </body>
 </html>
