@@ -1,1000 +1,286 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#020617">
-    <title>Enterprise Payment Protocol</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smgrowmart Payments</title>
 
-    <style>
-        /* ==========================================================================
-           1. DESIGN TOKENS & THEMING ENGINE
-           ========================================================================== */
-        :root {
-            /* Core Palette */
-            --space-900: #020617;
-            --space-800: #0f172a;
-            --space-700: #1e293b;
-            --space-600: #334155;
-            
-            /* Accents */
-            --accent-primary: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.4);
-            --upi-grad: linear-gradient(135deg, #4f46e5, #3b82f6);
-            --crypto-grad: linear-gradient(135deg, #f59e0b, #ea580c);
-            --binance-grad: linear-gradient(135deg, #eab308, #ca8a04);
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-            /* Glassmorphism Variables */
-            --glass-bg: rgba(15, 23, 42, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-highlight: rgba(255, 255, 255, 0.12);
-            --glass-blur: blur(24px);
-            --glass-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-            /* Typography */
-            --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
-            --font-mono: 'Space Mono', monospace;
-            --text-100: #ffffff;
-            --text-200: #e2e8f0;
-            --text-300: #94a3b8;
-            --text-400: #64748b;
+body{
+    font-family:'Inter',sans-serif;
+    background:#0f172a;
+    color:#fff;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
 
-            /* Metrics */
-            --radius-xl: 32px;
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --radius-sm: 12px;
-            --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
+.container{
+    width:100%;
+    max-width:500px;
+}
 
-        /* ==========================================================================
-           2. GLOBAL RESETS & FOUNDATION
-           ========================================================================== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+.card{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
 
-        html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-        }
+.header{
+    text-align:center;
+    margin-bottom:24px;
+}
 
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--space-900);
-            color: var(--text-100);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-            position: relative;
-            padding: 20px;
-        }
+.header h1{
+    font-size:28px;
+    margin-bottom:8px;
+}
 
-        ::selection {
-            background: var(--accent-primary);
-            color: white;
-        }
+.header p{
+    color:#94a3b8;
+}
 
-        /* ==========================================================================
-           3. CINEMATIC BACKGROUND EFFECTS
-           ========================================================================== */
-        #ambient-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
-            opacity: 0.6;
-            pointer-events: none;
-        }
+.tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
 
-        .glow-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.3;
-            z-index: 0;
-            pointer-events: none;
-            animation: floatOrb 20s infinite alternate ease-in-out;
-        }
-        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-primary); }
-        .orb-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #3b82f6; animation-delay: -10s; }
+.tab{
+    flex:1;
+    border:none;
+    background:#334155;
+    color:white;
+    padding:12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+}
 
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(10%, 10%) scale(1.2); }
-        }
+.tab.active{
+    background:#6366f1;
+}
 
-        /* ==========================================================================
-           4. CORE ARCHITECTURE LAYOUT
-           ========================================================================== */
-        #root {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 460px;
-            perspective: 1500px;
-        }
+.section{
+    display:none;
+}
 
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: 40px 32px;
-            box-shadow: var(--glass-shadow);
-            transform-style: preserve-3d;
-            animation: panelEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(30px) rotateX(-10deg) scale(0.95);
-        }
+.section.active{
+    display:block;
+}
 
-        @keyframes panelEnter {
-            to { opacity: 1; transform: translateY(0) rotateX(0) scale(1); }
-        }
+.qr{
+    width:220px;
+    height:220px;
+    margin:20px auto;
+    background:white;
+    border-radius:16px;
+    overflow:hidden;
+}
 
-        /* ==========================================================================
-           5. TYPOGRAPHY & HEADERS
-           ========================================================================== */
-        .sys-header {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 32px;
-            position: relative;
-        }
+.qr img{
+    width:100%;
+    height:100%;
+}
 
-        .sys-title {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.label{
+    font-size:12px;
+    color:#94a3b8;
+    margin-bottom:6px;
+}
 
-        .sys-subtitle {
-            font-size: 15px;
-            color: var(--text-300);
-            line-height: 1.5;
-            font-weight: 400;
-        }
+.value{
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:12px;
+    padding:14px;
+    word-break:break-all;
+    margin-bottom:12px;
+}
 
-        .badge-secure {
-            position: absolute;
-            top: 0; right: 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 100px;
-            color: var(--success);
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
+.input{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    margin-bottom:12px;
+    font-size:16px;
+}
 
-        .badge-secure .dot {
-            width: 6px; height: 6px;
-            background: var(--success);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--success);
-            animation: pulseDot 2s infinite;
-        }
+.btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#6366f1;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+}
 
-        @keyframes pulseDot {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* ==========================================================================
-           6. INTERACTIVE COMPONENTS (BUTTONS)
-           ========================================================================== */
-        .nav-list { display: flex; flex-direction: column; gap: 16px; }
-
-        .btn-module {
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            text-decoration: none;
-            color: var(--text-100);
-            transition: var(--transition-bounce);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .btn-module::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transform: translateX(-100%);
-            transition: 0.6s;
-        }
-
-        .btn-module:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--glass-highlight);
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-        }
-
-        .btn-module:hover::before { transform: translateX(100%); }
-        .btn-module:active { transform: translateY(0) scale(0.98); }
-
-        .btn-icon-wrapper {
-            width: 48px; height: 48px;
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 16px;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .icon-grad-upi { background: var(--upi-grad); }
-        .icon-grad-crypto { background: var(--crypto-grad); }
-        .icon-grad-binance { background: var(--binance-grad); }
-
-        .module-meta { display: flex; flex-direction: column; flex-grow: 1; }
-        .module-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-        .module-desc { font-size: 13px; color: var(--text-300); }
-
-        .module-arrow {
-            color: var(--text-400);
-            transition: var(--transition-smooth);
-        }
-        .btn-module:hover .module-arrow { color: var(--text-100); transform: translateX(4px); }
-
-        /* Secondary Actions */
-        .btn-secondary {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            width: 100%; padding: 16px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            color: var(--text-100);
-            font-size: 15px; font-weight: 600;
-            cursor: pointer; text-decoration: none;
-            transition: var(--transition-smooth);
-            margin-top: 16px;
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.2);
-        }
-
-        .btn-primary {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            width: 100%; padding: 18px;
-            background: var(--text-100);
-            color: var(--space-900);
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 16px; font-weight: 700;
-            cursor: pointer; text-decoration: none;
-            transition: var(--transition-bounce);
-            margin-top: 24px;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255,255,255,0.2);
-        }
-
-        /* ==========================================================================
-           7. CUSTOM AMOUNT FORM UI (THE MASTERPIECE)
-           ========================================================================== */
-        .amount-display {
-            text-align: center;
-            font-family: var(--font-mono);
-            font-size: 42px;
-            font-weight: 700;
-            color: var(--text-100);
-            margin-bottom: 24px;
-            min-height: 50px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.2);
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 24px;
-            animation: slideUpFade 0.4s ease forwards;
-        }
-
-        .currency-prefix {
-            position: absolute;
-            left: 20px; top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-300);
-            pointer-events: none;
-        }
-
-        .fancy-input {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 2px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 20px 20px 20px 45px;
-            font-family: var(--font-mono);
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-100);
-            outline: none;
-            transition: var(--transition-smooth);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .fancy-input::placeholder { color: var(--text-400); font-weight: 400; }
-        .fancy-input:focus {
-            border-color: var(--accent-primary);
-            background: rgba(0,0,0,0.5);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 20px var(--accent-glow);
-        }
-
-        /* ==========================================================================
-           8. HOLO-QR DISPLAY ENGINE
-           ========================================================================== */
-        .qr-stage {
-            position: relative;
-            display: flex; justify-content: center; align-items: center;
-            margin: 32px 0;
-            padding: 32px;
-            background: rgba(0,0,0,0.2);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            min-height: 280px;
-            overflow: hidden;
-        }
-
-        /* Cybernetic Corner Accents */
-        .qr-stage::before, .qr-stage::after {
-            content: ''; position: absolute; width: 20px; height: 20px;
-            border: 2px solid var(--text-400); pointer-events: none; opacity: 0.5;
-        }
-        .qr-stage::before { top: 15px; left: 15px; border-right: none; border-bottom: none; }
-        .qr-stage::after { bottom: 15px; right: 15px; border-left: none; border-top: none; }
-
-        .qr-frame {
-            position: relative;
-            width: 220px; height: 220px;
-            background: #ffffff;
-            padding: 14px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
-            animation: scaleInBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .qr-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-        /* Holographic Scanner Effect */
-        .scanner-line {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--accent-primary);
-            box-shadow: 0 0 20px 4px var(--accent-glow);
-            opacity: 0.8;
-            animation: scanHolo 2.5s infinite linear;
-            border-radius: 4px;
-            z-index: 5;
-        }
-
-        @keyframes scanHolo {
-            0% { top: 0; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        @keyframes scaleInBounce {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Skeleton Loading */
-        .qr-skeleton {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite linear;
-            border-radius: calc(var(--radius-md) - 14px);
-        }
-        @keyframes shimmer { to { background-position: -200% 0; } }
-
-        /* ==========================================================================
-           9. ADDRESS / DATA READOUT COMPONENTS
-           ========================================================================== */
-        .data-readout {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            animation: slideUpFade 0.5s ease forwards;
-        }
-
-        .data-readout:hover {
-            background: rgba(0,0,0,0.6);
-            border-color: rgba(255,255,255,0.2);
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.02);
-        }
-
-        .data-meta { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
-        .data-label { font-size: 11px; font-weight: 700; color: var(--text-400); letter-spacing: 0.1em; text-transform: uppercase; }
-        .data-value { font-family: var(--font-mono); font-size: 14px; color: var(--text-100); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .copy-icon {
-            color: var(--text-400);
-            transition: var(--transition-smooth);
-            padding: 8px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.05);
-        }
-        .data-readout:hover .copy-icon { color: var(--text-100); background: var(--accent-primary); }
-
-        /* ==========================================================================
-           10. NAVIGATION & UTILITIES
-           ========================================================================== */
-        .top-nav {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 24px;
-            color: var(--text-300); text-decoration: none; font-weight: 600; font-size: 14px;
-            transition: var(--transition-smooth); cursor: pointer;
-        }
-        .top-nav:hover { color: var(--text-100); transform: translateX(-4px); }
-
-        .footer-note {
-            text-align: center; margin-top: 32px; font-size: 12px;
-            color: var(--text-400); font-weight: 500;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-
-        /* Crypto Segmented Controls */
-        .crypto-tabs {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-            background: rgba(0,0,0,0.2); padding: 6px; border-radius: var(--radius-md);
-            margin-bottom: 24px; border: 1px solid var(--glass-border);
-        }
-        .tab-btn {
-            padding: 12px; background: transparent; border: none; border-radius: var(--radius-sm);
-            color: var(--text-300); font-size: 13px; font-weight: 600; cursor: pointer;
-            transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .tab-btn:hover { color: var(--text-100); }
-        .tab-btn.active {
-            background: rgba(255,255,255,0.1); color: var(--text-100);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* ==========================================================================
-           11. TOAST NOTIFICATION ENGINE
-           ========================================================================== */
-        #toast-zone {
-            position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
-            z-index: 9999; display: flex; flex-direction: column; gap: 12px; pointer-events: none;
-        }
-
-        .toast-item {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 16px 24px; border-radius: 100px;
-            font-size: 14px; font-weight: 600; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            display: flex; align-items: center; gap: 12px; pointer-events: auto;
-            animation: toastIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .toast-icon {
-            display: flex; align-items: center; justify-content: center;
-            width: 28px; height: 28px; background: var(--success);
-            border-radius: 50%; color: var(--space-900);
-        }
-
-        @keyframes toastIn {
-            0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes toastOut {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-20px) scale(0.9); }
-        }
-        @keyframes slideUpFade {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+.btn:hover{
+    opacity:.9;
+}
+</style>
 </head>
 <body>
 
-    <div class="glow-orb orb-1"></div>
-    <div class="glow-orb orb-2"></div>
-    <canvas id="ambient-canvas"></canvas>
+<div class="container">
+<div class="card">
 
-    <svg style="display: none;">
-        <defs>
-            <symbol id="icon-upi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </symbol>
-            <symbol id="icon-crypto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><line x1="12" y1="18" x2="12" y2="22"></line><line x1="12" y1="2" x2="12" y2="6"></line>
-            </symbol>
-            <symbol id="icon-binance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 2 12 12 22 22 12 12 2"></polygon>
-            </symbol>
-            <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </symbol>
-            <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
-            </symbol>
-            <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </symbol>
-            <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </symbol>
-            <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </symbol>
-            <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </symbol>
-        </defs>
-    </svg>
+<div class="header">
+<h1>Smgrowmart Payments</h1>
+<p>Select your preferred payment method</p>
+</div>
 
-    <main id="root"></main>
-    
-    <div id="toast-zone"></div>
+<div class="tabs">
+<button class="tab active" onclick="showTab('upi',this)">UPI</button>
+<button class="tab" onclick="showTab('crypto',this)">Crypto</button>
+<button class="tab" onclick="showTab('binance',this)">Binance</button>
+</div>
 
-    <script>
-        /**
-         * ==========================================================================
-         * ENTERPRISE SINGLE PAGE APPLICATION ARCHITECTURE
-         * Module Design Pattern, Class-based State Management, Native Routing.
-         * ==========================================================================
-         */
+<!-- UPI -->
 
-        const GLOBAL_CONFIG = {
-            UPI: {
-                id: "Smgrowmarthq@upi",
-                name: "Smgrowmart HQ",
-                currency: "INR"
-            },
-            BINANCE: { uid: "814429508" },
-            CRYPTO: {
-                wallet: "0x33aca3a213443730cf548b77b520f4f87df447ec",
-                networks: ['USDT (BEP20)', 'BTCB (BEP20)', 'ETH (BEP20)', 'BNB (BEP20)']
-            }
-        };
+<div class="section active" id="upi">
 
-        /* --- UTILITY ENGINE --- */
-        class SysUtils {
-            static generateQR(data) {
-                return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data)}&margin=15`;
-            }
+<input
+id="amount"
+class="input"
+type="number"
+placeholder="Enter Amount">
 
-            static formatCurrency(amount) {
-                if (!amount) return '0.00';
-                return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
-            }
+<div class="qr">
+<img id="upiQr">
+</div>
 
-            static async copyToClipboard(text, message) {
-                try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(text);
-                    } else {
-                        const input = document.createElement('textarea');
-                        input.value = text; document.body.appendChild(input);
-                        input.select(); document.execCommand('copy'); input.remove();
-                    }
-                    SysUI.showToast(message);
-                } catch (e) {
-                    console.error('Clipboard Error:', e);
-                }
-            }
+<div class="label">UPI ID</div>
+<div class="value">Smgrowmarthq@upi</div>
 
-            static debounce(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => { clearTimeout(timeout); func(...args); };
-                    clearTimeout(timeout); timeout = setTimeout(later, wait);
-                };
-            }
-        }
+<a id="payBtn">
+<button class="btn">
+Pay Now
+</button>
+</a>
 
-        /* --- UI COMPONENT ENGINE --- */
-        class SysUI {
-            static showToast(message) {
-                const zone = document.getElementById('toast-zone');
-                const toast = document.createElement('div');
-                toast.className = 'toast-item';
-                toast.innerHTML = `
-                    <div class="toast-icon"><svg width="16" height="16"><use href="#icon-check"></use></svg></div>
-                    <span>${message}</span>
-                `;
-                zone.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.animation = 'toastOut 0.4s ease forwards';
-                    toast.addEventListener('animationend', () => toast.remove());
-                }, 3000);
-            }
+</div>
 
-            static icon(name, size = 20) {
-                return `<svg width="${size}" height="${size}"><use href="#icon-${name}"></use></svg>`;
-            }
+<!-- Crypto -->
 
-            static buildHeader(title, subtitle, backPath = null) {
-                const backBtn = backPath ? `<a href="javascript:void(0)" onclick="Router.push('${backPath}')" class="top-nav">${this.icon('arrow-left', 18)} Go Back</a>` : '';
-                return `
-                    ${backBtn}
-                    <div class="sys-header">
-                        <div class="badge-secure"><div class="dot"></div>System Secured</div>
-                        <h1 class="sys-title">${title}</h1>
-                        <p class="sys-subtitle">${subtitle}</p>
-                    </div>
-                `;
-            }
+<div class="section" id="crypto">
 
-            static buildFooter() {
-                return `
-                    <div class="footer-note">
-                        ${this.icon('shield', 14)} Enterprise Layer-2 Encrypted Transfer
-                    </div>
-                `;
-            }
+<div class="qr">
+<img id="cryptoQr">
+</div>
 
-            static buildQRStage(qrUrl, id = "dynamic-qr-img") {
-                return `
-                    <div class="qr-stage">
-                        <div class="qr-frame">
-                            <div class="qr-skeleton" id="${id}-skeleton"></div>
-                            <img src="${qrUrl}" id="${id}" style="opacity:0; transition: opacity 0.3s" 
-                                 onload="document.getElementById('${id}-skeleton').style.display='none'; this.style.opacity='1';" alt="Secure QR">
-                            <div class="scanner-line"></div>
-                        </div>
-                    </div>
-                `;
-            }
+<div class="label">Wallet Address</div>
 
-            static buildDataBox(label, value, copyMessage) {
-                return `
-                    <div class="data-readout" onclick="SysUtils.copyToClipboard('${value}', '${copyMessage}')">
-                        <div class="data-meta">
-                            <span class="data-label">${label}</span>
-                            <span class="data-value">${value}</span>
-                        </div>
-                        <div class="copy-icon">${this.icon('copy', 18)}</div>
-                    </div>
-                `;
-            }
-        }
+<div class="value">
+0x33aca3a213443730cf548b77b520f4f87df447ec
+</div>
 
-        /* --- VIEW CONTROLLERS --- */
-        class Views {
-            
-            // Home / Gateway Selection View
-            static renderHome() {
-                return `
-                    <div class="glass-panel">
-                        ${SysUI.buildHeader('Select Gateway', 'Initialize payment protocol via preferred network.')}
-                        <div class="nav-list">
-                            <a href="javascript:void(0)" onclick="Router.push('/upi')" class="btn-module">
-                                <div class="btn-icon-wrapper icon-grad-upi">${SysUI.icon('upi', 24)}</div>
-                                <div class="module-meta">
-                                    <span class="module-title">Unified Payments (UPI)</span>
-                                    <span class="module-desc">Instant settlements via National Network</span>
-                                </div>
-                                <div class="module-arrow">${SysUI.icon('chevron')}</div>
-                            </a>
-                            <a href="javascript:void(0)" onclick="Router.push('/crypto')" class="btn-module">
-                                <div class="btn-icon-wrapper icon-grad-crypto">${SysUI.icon('crypto', 24)}</div>
-                                <div class="module-meta">
-                                    <span class="module-title">Web3 / Crypto</span>
-                                    <span class="module-desc">Decentralized BEP-20 Architecture</span>
-                                </div>
-                                <div class="module-arrow">${SysUI.icon('chevron')}</div>
-                            </a>
-                            <a href="javascript:void(0)" onclick="Router.push('/binance')" class="btn-module">
-                                <div class="btn-icon-wrapper icon-grad-binance">${SysUI.icon('binance', 24)}</div>
-                                <div class="module-meta">
-                                    <span class="module-title">Binance Pay</span>
-                                    <span class="module-desc">Zero-fee internal ledger transit</span>
-                                </div>
-                                <div class="module-arrow">${SysUI.icon('chevron')}</div>
-                            </a>
-                        </div>
-                        ${SysUI.buildFooter()}
-                    </div>
-                `;
-            }
+<button class="btn"
+onclick="copyText('0x33aca3a213443730cf548b77b520f4f87df447ec')">
+Copy Address
+</button>
 
-            // Normal UPI View (Standard)
-            static renderUPI() {
-                const intent = `upi://pay?pa=${GLOBAL_CONFIG.UPI.id}&pn=${encodeURIComponent(GLOBAL_CONFIG.UPI.name)}&cu=${GLOBAL_CONFIG.UPI.currency}`;
-                const qr = SysUtils.generateQR(intent);
+</div>
 
-                return `
-                    <div class="glass-panel">
-                        ${SysUI.buildHeader('UPI Gateway', 'Standard merchant transfer mode.', '/')}
-                        
-                        ${SysUI.buildQRStage(qr)}
-                        ${SysUI.buildDataBox('MERCHANT VPA / UPI ID', GLOBAL_CONFIG.UPI.id, 'UPI ID Copied to System')}
-                        
-                        <a href="${intent}" class="btn-primary">
-                            ${SysUI.icon('upi')} Pay via App Automatically
-                        </a>
+<!-- Binance -->
 
-                        <a href="javascript:void(0)" onclick="Router.push('/upi/custom')" class="btn-secondary">
-                            ${SysUI.icon('settings')} Create Custom Amount QR
-                        </a>
+<div class="section" id="binance">
 
-                        ${SysUI.buildFooter()}
-                    </div>
-                `;
-            }
+<div class="qr">
+<img id="binanceQr">
+</div>
 
-            // Advanced Two-Tier Custom UPI View
-            static renderUPICustom() {
-                // Return initial HTML shell. The Logic layer handles the reactivity.
-                return `
-                    <div class="glass-panel">
-                        ${SysUI.buildHeader('Dynamic UPI', 'Generate a specific amount payment matrix.', '/upi')}
-                        
-                        <div class="amount-display" id="custom-display">₹0.00</div>
+<div class="label">Binance UID</div>
 
-                        <div class="input-group">
-                            <span class="currency-prefix">₹</span>
-                            <input type="number" id="custom-amount-input" class="fancy-input" placeholder="Enter amount to generate..." autocomplete="off">
-                        </div>
+<div class="value">
+814429508
+</div>
 
-                        <div id="dynamic-qr-target" style="opacity: 0.5; pointer-events:none; transition: var(--transition-smooth);">
-                            ${SysUI.buildQRStage(SysUtils.generateQR(`upi://pay?pa=${GLOBAL_CONFIG.UPI.id}&pn=${encodeURIComponent(GLOBAL_CONFIG.UPI.name)}`), "live-qr")}
-                        </div>
+<button class="btn"
+onclick="copyText('814429508')">
+Copy UID
+</button>
 
-                        <a href="#" id="dynamic-pay-btn" class="btn-primary" style="opacity:0.5; pointer-events:none;">
-                            ${SysUI.icon('upi')} Pay Custom Amount
-                        </a>
-                        ${SysUI.buildFooter()}
-                    </div>
-                `;
-            }
+</div>
 
-            // Crypto / Web3 View
-            static renderCrypto() {
-                let tabsHtml = '';
-                GLOBAL_CONFIG.CRYPTO.networks.forEach((net, idx) => {
-                    const active = idx === 0 ? 'active' : '';
-                    tabsHtml += `<button class="tab-btn ${active}" onclick="StateController.updateCrypto(this, '${net}')">${net}</button>`;
-                });
+</div>
+</div>
 
-                const initialQr = SysUtils.generateQR(GLOBAL_CONFIG.CRYPTO.wallet);
+<script>
 
-                return `
-                    <div class="glass-panel">
-                        ${SysUI.buildHeader('Crypto Deposit', 'Select chain to resolve contract address.', '/')}
-                        
-                        <div class="crypto-tabs">${tabsHtml}</div>
+const UPI_ID="Smgrowmarthq@upi";
+const NAME="Smgrowmart HQ";
 
-                        <div id="crypto-stage">
-                            ${SysUI.buildQRStage(initialQr, "crypto-qr")}
-                            ${SysUI.buildDataBox('<span id="crypto-label">USDT (BEP20) ADDRESS</span>', GLOBAL_CONFIG.CRYPTO.wallet, 'Contract Address Copied')}
-                        </div>
-                        ${SysUI.buildFooter()}
-                    </div>
-                `;
-            }
+function qr(data){
+    return "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
+    + encodeURIComponent(data);
+}
 
-            // Binance Pay View
-            static renderBinance() {
-                const qr = SysUtils.generateQR(GLOBAL_CONFIG.BINANCE.uid);
-                return `
-                    <div class="glass-panel">
-                        ${SysUI.buildHeader('Binance Ledger', 'Global zero-fee instant transfer.', '/')}
-                        ${SysUI.buildQRStage(qr)}
-                        ${SysUI.buildDataBox('BINANCE PAY ID (UID)', GLOBAL_CONFIG.BINANCE.uid, 'Binance UID Copied')}
-                        
-                        <button class="btn-primary" onclick="SysUtils.copyToClipboard('${GLOBAL_CONFIG.BINANCE.uid}', 'UID Copied!')">
-                            Copy Binance UID
-                        </button>
-                        ${SysUI.buildFooter()}
-                    </div>
-                `;
-            }
-        }
+function showTab(id,btn){
 
-        /* --- STATE & LOGIC CONTROLLERS --- */
-        class StateController {
-            
-            // Handles Custom Amount View Logic (Reactivity)
-            static initCustomUPI() {
-                const input = document.getElementById('custom-amount-input');
-                const display = document.getElementById('custom-display');
-                const qrTarget = document.getElementById('dynamic-qr-target');
-                const qrImg = document.getElementById('live-qr');
-                const payBtn = document.getElementById('dynamic-pay-btn');
+    document.querySelectorAll('.section')
+    .forEach(x=>x.classList.remove('active'));
 
-                if(!input) return; // Guard clause
+    document.querySelectorAll('.tab')
+    .forEach(x=>x.classList.remove('active'));
 
-                const updateLogic = SysUtils.debounce((val) => {
-                    const amount = parseFloat(val);
-                    if (amount > 0) {
-                        display.innerText = `₹${SysUtils.formatCurrency(amount)}`;
-                        
-                        // Construct Dynamic Deep Link
-                        const intent = `upi://pay?pa=${GLOBAL_CONFIG.UPI.id}&pn=${encodeURIComponent(GLOBAL_CONFIG.UPI.name)}&am=${amount}&cu=${GLOBAL_CONFIG.UPI.currency}`;
-                        
-                        // Update UI state
-                        qrTarget.style.opacity = '1';
-                        qrTarget.style.pointerEvents = 'all';
-                        payBtn.style.opacity = '1';
-                        payBtn.style.pointerEvents = 'all';
-                        
-                        // Update Data
-                        qrImg.style.opacity = '0.5'; // loading state visual
-                        qrImg.src = SysUtils.generateQR(intent);
-                        qrImg.onload = () => qrImg.style.opacity = '1';
-                        payBtn.href = intent;
-                    } else {
-                        display.innerText = `₹0.00`;
-                        qrTarget.style.opacity = '0.5';
-                        qrTarget.style.pointerEvents = 'none';
-                        payBtn.style.opacity = '0.5';
-                        payBtn.style.pointerEvents = 'none';
-                    }
-                }, 400); // 400ms debounce to prevent API spam while typing
+    document.getElementById(id)
+    .classList.add('active');
 
-                input.addEventListener('input', (e) => updateLogic(e.target.value));
-            }
+    btn.classList.add('active');
+}
 
-            // Handles Crypto Tab Switching
-            static updateCrypto(btnElement, networkName) {
-                // UI Toggle
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                btnElement.classList.add('active');
+function copyText(text){
+    navigator.clipboard.writeText(text);
+    alert("Copied");
+}
 
-                // Update Text Label
-                document.getElementById('crypto-label').innerText = `${networkName} ADDRESS`;
+function updateUPI(){
 
-                // Add flash animation to stage
-                const stage = document.getElementById('crypto-stage');
-                stage.style.animation = 'none';
-                stage.offsetHeight; // trigger reflow
-                stage.style.animation = 'slideUpFade 0.4s ease forwards';
-                
-                SysUI.showToast(`Switched to ${networkName}`);
-            }
-        }
+    const amount=
+    document.getElementById('amount').value;
 
-        /* --- ROUTER ENGINE --- */
-        class Router {
-            static push(path) {
-                window.history.pushState({}, '', path);
-                this.resolve();
-            }
+    let intent=
+    `upi://pay?pa=${UPI_ID}&pn=${NAME}`;
 
-            static resolve() {
-                const path = window.location.pathname.toLowerCase();
-                const root = document.getElementById('root');
-                let view = '';
+    if(amount && amount>0){
+        intent += `&am=${amount}&cu=INR`;
+    }
 
-                // Path matching switch
-                if (path === '/upi') view = Views.renderUPI();
-                else if (path === '/upi/custom') view = Views.renderUPICustom();
-                else if (path === '/crypto') view = Views.renderCrypto();
-                else if (path === '/binance') view = Views.renderBinance();
-                else {
-                    view = Views.renderHome();
-                    if(path !== '/') window.history.replaceState({}, '', '/');
-                }
+    document.getElementById('upiQr').src=
+    qr(intent);
 
-                // Render with micro-transition
-                root.style.opacity = '0';
-                setTimeout(() => {
-                    root.innerHTML = view;
-                    root.style.opacity = '1';
-                    
-                    // Post-render lifecycle hooks
-                    if(path === '/upi/custom') StateController.initCustomUPI();
-                }, 100);
-            }
-        }
+    document.getElementById('payBtn').href=
+    intent;
+}
 
-        /* --- BACKGROUND CANVAS ENGINE (CONSTELLATION) --- */
-        class AmbientCanvas {
-            constructor() {
-                this.canvas = document.getElementById('ambient-canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.particles = [];
-                this.init();
-                window.addEventListener('resize', () => this.resize());
-                this.animate();
-            }
+document.getElementById('amount')
+.addEventListener('input',updateUPI);
 
-            init() {
-                this.resize();
-                const count = window.innerWidth < 768 ? 30 : 60; // Responsive density
-                for(let i=0; i<count; i++) {
-                    this.particles.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height,
-                        vx: (Math.random() - 0.5) * 0.3,
-                        vy: (Math.random() - 0.5) * 0.3,
-                        size: Math.random() * 1.5 + 0.5
-                    });
-                }
-            }
+document.getElementById('cryptoQr').src=
+qr('0x33aca3a213443730cf548b77b520f4f87df447ec');
 
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            }
+document.getElementById('binanceQr').src=
+qr('814429508');
 
-            animate() {
-                requestAnimationFrame(() => this.animate());
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+updateUPI();
 
-                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                this.ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
+</script>
 
-                for(let i=0; i<this.particles.length; i++) {
-                    let p = this.particles[i];
-                    p.x += p.vx; p.y += p.vy;
-
-                    if(p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
-                    if(p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
-
-                    this.ctx.beginPath();
-                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    this.ctx.fill();
-
-                    // Connect lines
-                    for(let j=i+1; j<this.particles.length; j++) {
-                        let p2 = this.particles[j];
-                        let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                        if(dist < 150) {
-                            this.ctx.lineWidth = 1 - (dist/150);
-                            this.ctx.beginPath();
-                            this.ctx.moveTo(p.x, p.y);
-                            this.ctx.lineTo(p2.x, p2.y);
-                            this.ctx.stroke();
-                        }
-                    }
-                }
-            }
-        }
-
-        /* --- INITIALIZATION --- */
-        document.addEventListener('DOMContentLoaded', () => {
-            new AmbientCanvas(); // Boot visual engine
-            
-            // Boot Routing engine
-            window.addEventListener('popstate', () => Router.resolve());
-            Router.resolve();
-        });
-    </script>
 </body>
 </html>
