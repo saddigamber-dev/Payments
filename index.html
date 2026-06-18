@@ -3,380 +3,470 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payments</title>
+<title>Premium Secure Payments</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+:root {
+    --bg-gradient: linear-gradient(135deg, #090a0f 0%, #121520 100%);
+    --card-bg: rgba(22, 26, 38, 0.8);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --accent-upi: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --accent-crypto: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --accent-binance: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+    --status-active: #10b981;
+    --status-active-bg: rgba(16, 185, 129, 0.15);
 }
 
-body{
-background:#0f1115;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-padding:20px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-.card{
-width:100%;
-max-width:390px;
-background:#171a21;
-border:1px solid #2a2f3a;
-border-radius:22px;
-padding:22px;
-box-shadow:0 10px 40px rgba(0,0,0,.35);
+body {
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
 }
 
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;
+/* Premium Card Design */
+.card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 28px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.title{
-font-size:20px;
-font-weight:700;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.status{
-font-size:12px;
-background:#1e3325;
-color:#7dff9d;
-padding:6px 10px;
-border-radius:999px;
-font-weight:700;
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.desc{
-font-size:14px;
-color:#b8c0cc;
-margin-bottom:18px;
-line-height:1.5;
+.title-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.btn{
-display:block;
-width:100%;
-padding:14px;
-border-radius:14px;
-text-decoration:none;
-text-align:center;
-font-size:14px;
-font-weight:700;
-margin-bottom:12px;
-transition:.2s;
-border:none;
-cursor:pointer;
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.btn:hover{
-opacity:.95;
-transform:translateY(-1px);
+.status {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    background: var(--status-active-bg);
+    color: var(--status-active);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-.upi{
-background:#5b5fff;
-color:white;
+.desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.6;
 }
 
-.crypto{
-background:#f3ba2f;
-color:black;
+/* Interactive Modern Buttons */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
-.binance{
-background:#f0b90b;
-color:black;
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
-.footer{
-margin-top:15px;
-text-align:center;
-font-size:12px;
-color:#6b7280;
-line-height:1.5;
+.btn:hover::after {
+    opacity: 1;
 }
 
-.wallet{
-font-size:12px;
-color:#8e98a8;
-margin-top:15px;
-word-break:break-all;
-text-align:center;
-line-height:1.5;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-#qrcode{
-display:flex;
-justify-content:center;
-margin-top:18px;
+.btn:active {
+    transform: translateY(0);
 }
 
-#qrcode img{
-width:180px;
-height:180px;
-background:white;
-padding:10px;
-border-radius:14px;
+.upi {
+    background: var(--accent-upi);
+    color: white;
 }
 
+.crypto {
+    background: var(--accent-crypto);
+    color: #000000;
+}
+
+.binance {
+    background: var(--accent-binance);
+    color: #000000;
+}
+
+/* Secondary Actions / Back Button */
+.btn-back {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 10px;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.network-alert {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+    font-size: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.wallet {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin-top: 20px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    word-break: break-all;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.wallet-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+#qrcode {
+    display: flex;
+    justify-content: center;
+    margin-top: 22px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+#qrcode img {
+    width: 190px;
+    height: 190px;
+    background: white;
+    padding: 12px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* High-End Toast Notification System */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: #1e293b;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+    animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.toast.fade-out {
+    animation: slideUp 0.25s ease-in forwards;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-20px); opacity: 0; }
+}
 </style>
 </head>
 
 <body>
 
 <div id="app"></div>
+<div class="toast-container" id="toastContainer"></div>
 
 <script>
-
-const path = location.pathname.toLowerCase();
-
+// Payment Configurations
 const UPI_ID = "digamberraj7903@ptaxis";
 const UPI_NAME = "Digamber Raj";
-
 const BINANCE_UID = "814429508";
+const WALLET = "0x33aca3a213443730cf548b77b520f4f87df447ec";
 
-const WALLET =
-"0x33aca3a213443730cf548b77b520f4f87df447ec";
+// Premium Toast Notification Engine
+function showToast(message) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `🌟 <span>${message}</span>`;
+    container.appendChild(toast);
 
-function home(){
-
-return `
-
-<div class="card">
-
-<div class="top">
-<div class="title">💳 Payment Methods</div>
-<div class="status">ACTIVE</div>
-</div>
-
-<div class="desc">
-Choose your preferred payment method.
-</div>
-
-<a class="btn upi" href="/upi">
-🇮🇳 UPI Payment
-</a>
-
-<a class="btn crypto" href="/crypto">
-₿ Crypto Payment
-</a>
-
-<a class="btn binance" href="/binance">
-🟡 Binance UID
-</a>
-
-<div class="footer">
-Instant payment processing available.
-</div>
-
-</div>
-
-`;
-
+    setTimeout(() => {
+        toast.classList.add('fade-out');
+        toast.addEventListener('animationend', () => toast.remove());
+    }, 2500);
 }
 
-function upi(){
-
-const upiPayload =
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
-
-const qrURL =
-`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiPayload)}`;
-
-setTimeout(() => {
-window.location.href = upiPayload;
-},1500);
-
-return `
-
-<div class="card">
-
-<div class="top">
-<div class="title">🇮🇳 UPI Payment</div>
-<div class="status">INSTANT</div>
-</div>
-
-<div class="desc">
-Attempting to open your UPI app automatically.
-</div>
-
-<a class="btn upi" href="${upiPayload}">
-Open UPI App
-</a>
-
-<div id="qrcode">
-<img src="${qrURL}">
-</div>
-
-<div class="footer">
-Scan QR if app did not open automatically.
-</div>
-
-</div>
-
-`;
-
+// Global UI Navigation Controller (Prevents 404 routing breaks on static hosts)
+function navigate(route) {
+    window.location.hash = route;
+    renderApp();
 }
 
-function crypto(){
-
-return `
-
-<div class="card">
-
-<div class="top">
-<div class="title">₿ Crypto Payment</div>
-<div class="status">1-5 MIN</div>
-</div>
-
-<div class="desc">
-Select your preferred BEP20 asset.
-</div>
-
-<button class="btn crypto"
-onclick="showQR('USDT Address')">
-Copy USDT Address
-</button>
-
-<button class="btn crypto"
-onclick="showQR('Bitcoin Address')">
-Copy Bitcoin Address
-</button>
-
-<button class="btn crypto"
-onclick="showQR('Litecoin Address')">
-Copy Litecoin Address
-</button>
-
-<button class="btn crypto"
-onclick="showQR('Ethereum Address')">
-Copy Ethereum Address
-</button>
-
-<button class="btn crypto"
-onclick="showQR('ZCash Address')">
-Copy ZCash Address
-</button>
-
-<button class="btn crypto"
-onclick="showQR('BNB Address')">
-Copy BNB Address
-</button>
-
-<div id="qrcode"></div>
-
-<div class="wallet" id="walletText"></div>
-
-<div class="footer">
-Tap any asset to generate QR instantly.
-</div>
-
-</div>
-
-`;
-
+function home() {
+    return `
+        <div class="card">
+            <div class="top">
+                <div class="title-container">
+                    <div class="title">💳 Payment Gateway</div>
+                </div>
+                <div class="status">SECURE</div>
+            </div>
+            <div class="desc">
+                Select your preferred institutional or decentralized gateway module below to settle your balance.
+            </div>
+            <button class="btn upi" onclick="navigate('upi')">
+                🇮🇳 UPI Payment
+            </button>
+            <button class="btn crypto" onclick="navigate('crypto')">
+                ₿ Crypto Assets
+            </button>
+            <button class="btn binance" onclick="navigate('binance')">
+                🟡 Binance Pay
+            </button>
+            <div class="footer">
+                🔒 Layer-2 end-to-end payment encryption active.
+            </div>
+        </div>
+    `;
 }
 
-function binance(){
+function upi() {
+    const upiPayload = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
+    const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiPayload)}`;
 
-return `
+    setTimeout(() => {
+        window.location.href = upiPayload;
+    }, 1200);
 
-<div class="card">
-
-<div class="top">
-<div class="title">🟡 Binance UID</div>
-<div class="status">FASTEST</div>
-</div>
-
-<div class="desc">
-Internal Binance transfers supported.
-</div>
-
-<button class="btn binance"
-onclick="copyUID()">
-Copy Binance UID
-</button>
-
-<div id="qrcode"></div>
-
-<div class="wallet">
-UID: ${BINANCE_UID}
-</div>
-
-<div class="footer">
-Scan QR or copy UID manually.
-</div>
-
-</div>
-
-`;
-
+    return `
+        <div class="card">
+            <div class="top">
+                <div class="title-container">
+                    <div class="title">🇮🇳 Unified Payments</div>
+                </div>
+                <div class="status">AUTOMATED</div>
+            </div>
+            <div class="desc">
+                Initializing deep-linking routines. Launching your default system UPI application suite...
+            </div>
+            <a class="btn upi" href="${upiPayload}">
+                Manually Open App
+            </a>
+            <div id="qrcode">
+                <img src="${qrURL}" alt="UPI Dynamic QR Code">
+            </div>
+            <button class="btn btn-back" onclick="navigate('')">← Return to Gateway</button>
+            <div class="footer">
+                If your ecosystem fails to auto-launch, capture or scan the matrix structure manually.
+            </div>
+        </div>
+    `;
 }
 
-function showQR(name){
-
-navigator.clipboard.writeText(WALLET);
-
-document.getElementById("walletText").innerHTML =
-name + "<br><br>" + WALLET;
-
-const qrURL =
-`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(WALLET)}`;
-
-document.getElementById("qrcode").innerHTML =
-`<img src="${qrURL}">`;
-
-alert(name + " copied");
-
+function crypto() {
+    return `
+        <div class="card">
+            <div class="top">
+                <div class="title-container">
+                    <div class="title">₿ Multi-Chain Crypto</div>
+                </div>
+                <div class="status">BSC NETWORK</div>
+            </div>
+            <div class="network-alert">
+                ⚠️ Verification warning: Transfer funds exclusively via the BSC (BEP20) layer token framework.
+            </div>
+            <div class="desc">
+                Select a native smart contract asset below to dynamically resolve the recipient address framework.
+            </div>
+            <button class="btn crypto" onclick="showQR('USDT Address (BEP20)')">Copy USDT Address</button>
+            <button class="btn crypto" onclick="showQR('Bitcoin Address (BEP20)')">Copy BTCB Address</button>
+            <button class="btn crypto" onclick="showQR('Litecoin Address (BEP20)')">Copy LTC Address</button>
+            <button class="btn crypto" onclick="showQR('Ethereum Address (BEP20)')">Copy ETH Address</button>
+            <button class="btn crypto" onclick="showQR('BNB Address (BEP20)')">Copy BNB Address</button>
+            
+            <div id="qrcode"></div>
+            <div class="wallet" id="walletText" style="display:none;"></div>
+            
+            <button class="btn btn-back" onclick="navigate('')">← Return to Gateway</button>
+            <div class="footer">
+                Asset mapping generates synchronized target cryptographic payloads on demand.
+            </div>
+        </div>
+    `;
 }
 
-function copyUID(){
-
-navigator.clipboard.writeText(BINANCE_UID);
-
-const qrURL =
-`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(BINANCE_UID)}`;
-
-document.getElementById("qrcode").innerHTML =
-`<img src="${qrURL}">`;
-
-alert("Binance UID copied");
-
+function binance() {
+    return `
+        <div class="card">
+            <div class="top">
+                <div class="title-container">
+                    <div class="title">🟡 Binance Ecosystem</div>
+                </div>
+                <div class="status">0% FEE</div>
+            </div>
+            <div class="desc">
+                Settle transaction instantly using internal ledger book transfers through the Binance application architecture.
+            </div>
+            <button class="btn binance" onclick="copyUID()">
+                Copy Binance UID
+            </button>
+            <div id="qrcode"></div>
+            <div class="wallet">
+                <div class="wallet-label">Target Account User ID</div>
+                <strong>${BINANCE_UID}</strong>
+            </div>
+            <button class="btn btn-back" onclick="navigate('')">← Return to Gateway</button>
+            <div class="footer">
+                Execute cross-border account internal allocations using the calculated address above.
+            </div>
+        </div>
+    `;
 }
 
-if(path === "/upi"){
-
-app.innerHTML = upi();
-
+// Interaction Engines
+function showQR(assetName) {
+    navigator.clipboard.writeText(WALLET).then(() => {
+        const targetElement = document.getElementById("walletText");
+        targetElement.style.display = "block";
+        targetElement.innerHTML = `<div class="wallet-label">${assetName}</div><strong>${WALLET}</strong>`;
+        
+        const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(WALLET)}`;
+        document.getElementById("qrcode").innerHTML = `<img src="${qrURL}" alt="Crypto QR Code">`;
+        
+        showToast(`${assetName.split(' ')[0]} address copied to clipboard.`);
+    }).catch(err => {
+        console.error('Could not copy text: ', err);
+    });
 }
 
-else if(path === "/crypto"){
-
-app.innerHTML = crypto();
-
+function copyUID() {
+    navigator.clipboard.writeText(BINANCE_UID).then(() => {
+        const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(BINANCE_UID)}`;
+        document.getElementById("qrcode").innerHTML = `<img src="${qrURL}" alt="Binance UID QR Code">`;
+        
+        showToast("Binance UID copied successfully.");
+    }).catch(err => {
+        console.error('Could not copy text: ', err);
+    });
 }
 
-else if(path === "/binance"){
-
-app.innerHTML = binance();
-
+// Router Lifecycle Management
+function renderApp() {
+    const currentHash = window.location.hash.replace('#', '').toLowerCase();
+    const appContainer = document.getElementById("app");
+    
+    if (currentHash === "upi") {
+        appContainer.innerHTML = upi();
+    } else if (currentHash === "crypto") {
+        appContainer.innerHTML = crypto();
+    } else if (currentHash === "binance") {
+        appContainer.innerHTML = binance();
+    } else {
+        appContainer.innerHTML = home();
+    }
 }
 
-else{
-
-app.innerHTML = home();
-
-}
-
+// Initialize Router State Event Handlers
+window.addEventListener('hashchange', renderApp);
+window.addEventListener('load', renderApp);
 </script>
 
 </body>
